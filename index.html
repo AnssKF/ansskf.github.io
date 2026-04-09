@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Anss Khaled — Software Engineer Portfolio" />
+  <meta name="color-scheme" content="dark" />
+  <title>Anss Khaled</title>
+
+  <!-- Google Fonts: Space Grotesk (display/body) + Space Mono (technical) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+  />
+
+  <!-- css.gg icon library (pure CSS, ~700 icons) -->
+  <link rel="preconnect" href="https://unpkg.com" crossorigin />
+  <link rel="stylesheet" href="https://unpkg.com/css.gg@2.0.0/icons/all.css" />
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body x-data="portfolio()" x-init="init()">
+
+  <!-- ── Loader Overlay ──────────────────────────────────── -->
+  <div
+    class="loader-overlay"
+    :class="{ 'is-hidden': !loading }"
+    aria-hidden="true"
+    role="presentation"
+  >
+    <span class="loader-dot"></span>
+    <span class="loader-dot"></span>
+    <span class="loader-dot"></span>
+  </div>
+
+  <!-- ── Views Container ─────────────────────────────────── -->
+  <main class="content-area" aria-live="polite" aria-atomic="false">
+
+    <!-- ── View 1: Landing ─────────────────────────────── -->
+    <section
+      class="view"
+      :class="{
+        'is-active':  currentView  === 'landing',
+        'is-exiting': exitingView  === 'landing'
+      }"
+      aria-label="Home"
+    >
+      <div class="view-landing">
+
+        <!-- Top metadata bar -->
+        <div class="landing-header">
+          <span class="mono-label" x-text="'AK — ' + (resume?.basics?.label ?? '')"></span>
+          <span class="mono-label" x-text="resume?.basics?.location?.city ?? ''"></span>
+        </div>
+
+        <!-- Hairline separator -->
+        <span class="landing-sep" aria-hidden="true"></span>
+
+        <!-- Centred name block + spec annotation -->
+        <div class="landing-name-block">
+          <div class="landing-name" aria-label="Full name">
+            <span class="name--first" x-text="firstName"></span>
+            <span class="name--last"  x-text="lastName"></span>
+          </div>
+          <aside class="landing-spec" aria-hidden="true">
+            <span class="spec-item spec-item--rule"></span>
+            <span class="spec-item">Company</span>
+            <span class="spec-item spec-item--value" x-text="(resume?.work ?? [])[0]?.name ?? '—'"></span>
+            <span class="spec-item spec-item--rule"></span>
+            <span class="spec-item">Role</span>
+            <span class="spec-item spec-item--value" x-text="(resume?.work ?? [])[0]?.position ?? '—'"></span>
+            <span class="spec-item spec-item--rule"></span>
+            <span class="spec-item">Since</span>
+            <span class="spec-item spec-item--value" x-text="formatDate((resume?.work ?? [])[0]?.startDate) || '—'"></span>
+          </aside>
+        </div>
+
+        <!-- Footer: links -->
+        <footer class="landing-footer">
+          <hr class="landing-rule" aria-hidden="true" />
+          <div class="landing-links">
+            <!-- Email -->
+            <a
+              class="landing-link"
+              :href="'mailto:' + (resume?.basics?.email ?? '')"
+              x-show="resume?.basics?.email"
+            >
+              <span class="icon-box"><i class="gg-mail" aria-hidden="true"></i></span>
+              <span x-text="resume?.basics?.email"></span>
+            </a>
+
+            <!-- Social profiles from JSON -->
+            <template
+              x-for="profile in (resume?.basics?.profiles ?? [])"
+              :key="profile.network"
+            >
+              <a
+                class="landing-link"
+                :href="profile.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="icon-box"><i :class="'gg-' + profileIcon(profile.network)" aria-hidden="true"></i></span>
+                <span x-text="profile.network + ' / ' + profile.username"></span>
+              </a>
+            </template>
+
+            <!-- Resume / CV -->
+            <a
+              class="landing-link"
+              href="https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="icon-box"><i class="gg-file-document" aria-hidden="true"></i></span>
+              <span>Resume / CV</span>
+            </a>
+          </div>
+        </footer>
+
+      </div>
+    </section>
+
+    <!-- ── View 2: Education ────────────────────────────── -->
+    <section
+      class="view"
+      :class="{
+        'is-active':  currentView  === 'education',
+        'is-exiting': exitingView  === 'education'
+      }"
+      aria-label="Education"
+    >
+      <div class="view-inner">
+        <h2 class="section-label" data-index="02">Education</h2>
+
+        <div x-show="!(resume?.education?.length)" class="empty-state">
+          No education entries found.
+        </div>
+
+        <template
+          x-for="(edu, i) in (resume?.education ?? [])"
+          :key="i"
+        >
+          <article class="card">
+            <div class="card-row">
+              <h3 class="card-title">
+                <template x-if="edu.url">
+                  <a
+                    class="card-link"
+                    :href="edu.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    x-text="edu.institution"
+                  ></a>
+                </template>
+                <template x-if="!edu.url">
+                  <span x-text="edu.institution"></span>
+                </template>
+              </h3>
+              <span
+                class="card-meta"
+                x-show="edu.startDate || edu.endDate"
+              >
+                <span x-text="formatDate(edu.startDate)"></span>
+                <template x-if="edu.startDate || edu.endDate">
+                  <span> – </span>
+                </template>
+                <span x-text="edu.endDate ? formatDate(edu.endDate) : 'Present'"></span>
+              </span>
+            </div>
+            <p
+              class="card-subtitle"
+              x-text="[edu.studyType, edu.area].filter(Boolean).join(' · ')"
+            ></p>
+            <p
+              class="card-body"
+              x-show="edu.score"
+              x-text="'Score: ' + edu.score"
+            ></p>
+          </article>
+        </template>
+      </div>
+    </section>
+
+    <!-- ── View 3: Skills ───────────────────────────────── -->
+    <section
+      class="view"
+      :class="{
+        'is-active':  currentView  === 'skills',
+        'is-exiting': exitingView  === 'skills'
+      }"
+      aria-label="Skills"
+    >
+      <div class="view-inner">
+        <h2 class="section-label" data-index="03">Skills</h2>
+
+        <div class="skills-grid">
+          <template
+            x-for="(group, i) in (resume?.skills ?? [])"
+            :key="i"
+          >
+            <div class="skill-group" :aria-label="group.name">
+              <h3 class="skill-group-label" x-text="group.name"></h3>
+              <div class="tags" role="list">
+                <template x-for="kw in group.keywords" :key="kw">
+                  <span class="tag" role="listitem" x-text="kw"></span>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── View 4: Experience ───────────────────────────── -->
+    <section
+      class="view"
+      :class="{
+        'is-active':  currentView  === 'experience',
+        'is-exiting': exitingView  === 'experience'
+      }"
+      aria-label="Work Experience"
+    >
+      <div class="view-inner">
+        <h2 class="section-label" data-index="04">Experience</h2>
+
+        <div x-show="!(resume?.work?.length)" class="empty-state">
+          Work history coming soon.
+        </div>
+
+        <template
+          x-for="(job, i) in (resume?.work ?? [])"
+          :key="i"
+        >
+          <article class="card">
+            <div class="card-row">
+              <h3 class="card-title">
+                <template x-if="job.url">
+                  <a
+                    class="card-link"
+                    :href="job.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    x-text="job.name"
+                  ></a>
+                </template>
+                <template x-if="!job.url">
+                  <span x-text="job.name"></span>
+                </template>
+              </h3>
+              <span class="card-meta" x-show="job.startDate">
+                <span x-text="formatDate(job.startDate)"></span>
+                <span> – </span>
+                <span x-text="job.endDate ? formatDate(job.endDate) : 'Present'"></span>
+              </span>
+            </div>
+            <p class="card-subtitle" x-text="job.position"></p>
+            <p
+              class="card-body"
+              x-show="job.summary"
+              x-text="job.summary"
+            ></p>
+            <ul
+              class="highlights"
+              x-show="job.highlights && job.highlights.length"
+              aria-label="Highlights"
+            >
+              <template x-for="h in (job.highlights ?? [])" :key="h">
+                <li x-text="h"></li>
+              </template>
+            </ul>
+          </article>
+        </template>
+      </div>
+    </section>
+
+    <!-- ── View 5: Contact ──────────────────────────────── -->
+    <section
+      class="view"
+      :class="{
+        'is-active':  currentView  === 'contact',
+        'is-exiting': exitingView  === 'contact'
+      }"
+      aria-label="Contact"
+    >
+      <div class="view-landing">
+
+        <div class="landing-header">
+          <span class="mono-label">05 — Contact</span>
+        </div>
+
+        <span class="landing-sep" aria-hidden="true"></span>
+
+        <div class="landing-name-block">
+          <h2 class="contact-heading">Get in<br/>touch.</h2>
+        </div>
+
+        <footer class="landing-footer">
+          <hr class="landing-rule" aria-hidden="true" />
+          <div class="contact-links">
+            <!-- Email -->
+            <a
+              class="contact-link"
+              :href="'mailto:' + (resume?.basics?.email ?? '')"
+              x-show="resume?.basics?.email"
+            >
+              <span class="icon-box"><i class="gg-mail" aria-hidden="true"></i></span>
+              <span x-text="resume?.basics?.email"></span>
+            </a>
+
+            <!-- Social profiles -->
+            <template
+              x-for="profile in (resume?.basics?.profiles ?? [])"
+              :key="profile.network"
+            >
+              <a
+                class="contact-link"
+                :href="profile.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="icon-box"><i :class="'gg-' + profileIcon(profile.network)" aria-hidden="true"></i></span>
+                <span x-text="profile.network + ' / ' + profile.username"></span>
+              </a>
+            </template>
+
+            <!-- Resume / CV -->
+            <a
+              class="contact-link"
+              href="https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="icon-box"><i class="gg-file-document" aria-hidden="true"></i></span>
+              <span>Resume / CV</span>
+            </a>
+          </div>
+        </footer>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Floating Dock Navigation ────────────────────────── -->
+  <nav class="dock" aria-label="Site navigation">
+    <template x-for="item in navItems" :key="item.view">
+      <button
+        class="dock-btn"
+        :class="{ 'is-active': currentView === item.view }"
+        @click="switchView(item.view)"
+        :aria-label="item.label"
+        :aria-current="currentView === item.view ? 'page' : false"
+        type="button"
+      >
+        <span x-text="item.label"></span>
+      </button>
+    </template>
+  </nav>
+
+  <!-- Script loading order: app.js first (defines portfolio()), then Alpine -->
+  <script src="app.js" defer></script>
+  <script
+    defer
+    src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"
+  ></script>
+
+</body>
+</html>

@@ -1,0 +1,755 @@
+/* ============================================================
+   Fonts — Space Grotesk (display/body) + Space Mono (technical)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ============================================================
+   Reset & Custom Properties
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Strict monochrome — Swiss / Typographic Minimalism (dark) */
+  --c-bg:       #0a0a0a;
+  --c-surface:  #0e0e0e;
+  --c-card:     #111111;
+  --c-border:   #ffffff;
+  --c-border-2: #2a2a2a;
+  --c-text:     #f0f0f0;
+  --c-muted:    #3a3a3a;
+  --c-dim:      #606060;
+  --c-faint:    #141414;
+  --c-accent:   #ffffff;
+
+  /* Nav bar dimensions */
+  --dock-h:      48px;
+  --dock-bottom: 0px;
+
+  /* Typography */
+  --f-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --f-mono:    'Space Mono', 'Courier New', monospace;
+
+  /* Transitions */
+  --ease-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-view:  0.55s;
+}
+
+/* ============================================================
+   Base — enforce strict 100vw × 100vh, no scroll
+   ============================================================ */
+
+html {
+  width:    100vw;
+  height:   100vh;
+  overflow: hidden;
+}
+
+body {
+  width:    100vw;
+  height:   100vh;
+  overflow: hidden;
+
+  background-color: var(--c-bg);
+  color:            var(--c-text);
+  font-family:      var(--f-display);
+  font-size:        14px;
+  line-height:      1.6;
+
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color:           inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor:      pointer;
+  border:      none;
+  background:  none;
+  padding:     0;
+}
+
+/* ============================================================
+   Content Area — full-bleed viewport shell
+   ============================================================ */
+
+.content-area {
+  position: fixed;
+  inset:    0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Navigation Bar — full-width Swiss bottom strip
+   ============================================================ */
+
+.dock {
+  position:   fixed;
+  bottom:     0;
+  left:       0;
+  right:      0;
+  height:     var(--dock-h);
+  z-index:    50;
+
+  display:     flex;
+  align-items: stretch;
+
+  background:  var(--c-bg);
+  border-top:  1px solid var(--c-border);
+}
+
+.dock-btn {
+  position:        relative;
+  flex:            1;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+
+  font-family:    var(--f-mono);
+  font-size:      9px;
+  font-weight:    400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color:          var(--c-muted);
+
+  border-right: 1px solid var(--c-border-2);
+  transition:   color 0.2s ease, background 0.2s ease;
+}
+
+.dock-btn:last-child {
+  border-right: none;
+}
+
+.dock-btn:hover {
+  color:      var(--c-text);
+  background: var(--c-faint);
+}
+
+.dock-btn.is-active {
+  color: var(--c-text);
+}
+
+/* Active top-bar indicator */
+.dock-btn.is-active::before {
+  content:    '';
+  position:   absolute;
+  top:        -1px;
+  left:       0;
+  right:      0;
+  height:     2px;
+  background: var(--c-border);
+}
+
+/* ============================================================
+   Views — absolutely stacked panels, animated in/out
+   ============================================================ */
+
+.view {
+  position: absolute;
+  inset:    0;
+
+  opacity:   0;
+  transform: translateY(24px);
+
+  transition:
+    opacity   var(--dur-view) var(--ease-expo),
+    transform var(--dur-view) var(--ease-expo);
+
+  pointer-events: none;
+  will-change:    opacity, transform;
+}
+
+.view.is-active {
+  opacity:        1;
+  transform:      translateY(0);
+  pointer-events: all;
+}
+
+.view.is-exiting {
+  opacity:             0;
+  transform:           translateY(-16px);
+  pointer-events:      none;
+  transition-duration: 0.35s;
+}
+
+/* ── Inner scrollable container (non-landing views)
+   Bottom padding clears the floating dock. */
+
+.view-inner {
+  height:     100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding:    64px 80px calc(var(--dock-h) + 52px);
+  max-width:  900px;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border) transparent;
+}
+
+.view-inner::-webkit-scrollbar        { width: 2px; }
+.view-inner::-webkit-scrollbar-track  { background: transparent; }
+.view-inner::-webkit-scrollbar-thumb  { background: var(--c-border-2); border-radius: 2px; }
+
+/* ============================================================
+   Section Label — Swiss-style mono heading with index prefix
+   ============================================================ */
+
+.section-label {
+  display:     flex;
+  align-items: center;
+  gap:         14px;
+
+  font-family:    var(--f-mono);
+  font-size:      10px;
+  font-weight:    400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color:          var(--c-dim);
+
+  padding-bottom: 24px;
+  margin-bottom:  40px;
+  border-bottom:  1px solid var(--c-border);
+}
+
+/* Numeric index prepended via data attribute */
+.section-label::before {
+  content:        attr(data-index);
+  color:          var(--c-muted);
+  font-size:      9px;
+  letter-spacing: 0.15em;
+  flex-shrink:    0;
+}
+
+/* ============================================================
+   Cards (education & experience)
+   ============================================================ */
+
+.card {
+  padding:       28px 0 28px 20px;
+  border-bottom: 1px solid var(--c-border-2);
+  border-left:   2px solid transparent;
+  transition:    border-left-color 0.2s ease;
+}
+
+.card:hover {
+  border-left-color: var(--c-border);
+}
+
+.card:first-of-type {
+  padding-top: 0;
+}
+
+.card-row {
+  display:         flex;
+  align-items:     baseline;
+  justify-content: space-between;
+  gap:             24px;
+  margin-bottom:   6px;
+}
+
+.card-title {
+  font-size:      15px;
+  font-weight:    700;
+  color:          var(--c-text);
+  letter-spacing: -0.02em;
+}
+
+.card-link {
+  transition: opacity 0.2s ease;
+}
+.card-link:hover { opacity: 0.6; }
+
+.card-meta {
+  font-family:    var(--f-mono);
+  font-size:      10px;
+  color:          var(--c-dim);
+  white-space:    nowrap;
+  flex-shrink:    0;
+  letter-spacing: 0.06em;
+}
+
+.card-subtitle {
+  font-family:    var(--f-mono);
+  font-size:      10px;
+  color:          var(--c-dim);
+  margin-bottom:  12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.card-body {
+  font-size:   13px;
+  color:       var(--c-dim);
+  line-height: 1.8;
+  max-width:   520px;
+}
+
+/* ============================================================
+   Landing View  — Swiss typographic layout
+   ============================================================ */
+
+.view-landing {
+  position: absolute;
+  inset:    0;
+  display:  flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* Top/side padding; bottom clears the nav bar */
+  padding: 44px 80px calc(var(--dock-h) + 44px);
+}
+
+/* Corner registration marks */
+.view-landing::before,
+.view-landing::after {
+  content:        '';
+  position:       absolute;
+  width:          20px;
+  height:         20px;
+  pointer-events: none;
+  z-index:        1;
+}
+
+.view-landing::before {
+  top:         44px;
+  left:        80px;
+  border-top:  1px solid var(--c-border);
+  border-left: 1px solid var(--c-border);
+}
+
+.view-landing::after {
+  bottom:        calc(var(--dock-h) + 44px);
+  right:         80px;
+  border-bottom: 1px solid var(--c-border);
+  border-right:  1px solid var(--c-border);
+}
+
+/* ── Top metadata bar: left = index code, right = role label */
+.landing-header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     flex-start;
+  flex-shrink:     0;
+  padding: 4px 4px 0 8px;
+}
+
+.mono-label {
+  font-family:    var(--f-mono);
+  font-size:      10px;
+  font-weight:    400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color:          var(--c-dim);
+}
+
+/* Hairline rule between header and name */
+.landing-sep {
+  display:     block;
+  flex-shrink: 0;
+  height:      1px;
+  background:  var(--c-border);
+  margin:      28px 0;
+}
+
+/* Flex-1 block: name on left, spec annotation on right — anchored to bottom */
+.landing-name-block {
+  flex:            1;
+  display:         flex;
+  align-items:     flex-end;
+  justify-content: space-between;
+  overflow:        hidden;
+  min-height:      0;
+  gap:             40px;
+  padding-bottom:  4px;
+}
+
+/* Large typographic name */
+.landing-name {
+  display:        flex;
+  flex-direction: column;
+  line-height:    0.88;
+  letter-spacing: -0.04em;
+  font-weight:    700;
+  /* Fluid: 72 px on 320 px screen → 160 px on 1920 px screen */
+  font-size:      clamp(72px, 13vw, 160px);
+  user-select:    text;
+}
+
+.name--first {
+  color: var(--c-accent);
+}
+
+/* Outlined / ghost treatment — Swiss poster aesthetic */
+.name--last {
+  color:               transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
+}
+
+/* ── Blueprint spec annotation sidebar */
+.landing-spec {
+  display:        flex;
+  flex-direction: column;
+  gap:            10px;
+  align-self:     flex-end;
+  padding-bottom: 8px;
+  flex-shrink:    0;
+}
+
+.spec-item {
+  display:        block;
+  font-family:    var(--f-mono);
+  font-size:      8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color:          var(--c-muted);
+  white-space:    nowrap;
+}
+
+.spec-item--value {
+  color:       var(--c-dim);
+  font-weight: 700;
+  font-size:   9px;
+}
+
+.spec-item--rule {
+  display:    block;
+  width:      60px;
+  height:     1px;
+  background: var(--c-border-2);
+}
+
+/* ── Links section at the bottom of the landing view */
+.landing-footer { flex-shrink: 0; }
+
+.landing-rule {
+  border:     none;
+  border-top: 1px solid var(--c-border);
+  margin:     28px 0 22px;
+}
+
+.landing-links {
+  display:        flex;
+  flex-direction: column;
+  gap:            14px;
+}
+
+.landing-link {
+  display:     inline-flex;
+  align-items: center;
+  gap:         12px;
+
+  font-family:    var(--f-mono);
+  font-size:      11px;
+  letter-spacing: 0.04em;
+  color:          var(--c-dim);
+  width:          fit-content;
+
+  transition: color 0.2s ease;
+}
+
+.landing-link .icon-box {
+  display: none;
+}
+
+.landing-link::before {
+  content:     '→';
+  font-family: var(--f-display);
+  font-size:   16px;
+  color:       var(--c-muted);
+  transition:  transform 0.2s ease, color 0.2s ease;
+  display:     inline-block;
+  line-height: 1;
+}
+
+.landing-link:hover             { color: var(--c-text); }
+.landing-link:hover::before     { color: var(--c-text); transform: translateX(4px); }
+
+/* ============================================================
+   Icon Box — normalises varying css.gg intrinsic sizes
+   ============================================================ */
+
+.icon-box {
+  flex-shrink:     0;
+  width:           22px;
+  height:          22px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  overflow:        visible;
+}
+
+/* ============================================================
+   Skills View
+   ============================================================ */
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 36px 56px;
+}
+
+.skill-group-label {
+  font-family:    var(--f-mono);
+  font-size:      9px;
+  font-weight:    400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color:          var(--c-dim);
+  margin-bottom:  16px;
+  padding-bottom: 8px;
+  border-bottom:  1px solid var(--c-border-2);
+}
+
+.tags {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       6px;
+}
+
+.tag {
+  font-family:    var(--f-mono);
+  font-size:      11px;
+  padding:        5px 10px;
+  background:     transparent;
+  border:         1px solid var(--c-border-2);
+  border-radius:  0;
+  color:          var(--c-dim);
+  letter-spacing: 0.04em;
+  cursor:         default;
+
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.tag:hover {
+  background:   var(--c-text);
+  color:        var(--c-bg);
+  border-color: var(--c-text);
+}
+
+/* ============================================================
+   Experience — highlight list
+   ============================================================ */
+
+.highlights {
+  list-style:     none;
+  margin-top:     14px;
+  display:        flex;
+  flex-direction: column;
+  gap:            6px;
+}
+
+.highlights li {
+  position:       relative;
+  padding-left:   20px;
+  font-family:    var(--f-mono);
+  font-size:      11px;
+  color:          var(--c-dim);
+  line-height:    1.7;
+  letter-spacing: 0.02em;
+}
+
+.highlights li::before {
+  content:   '//';
+  position:  absolute;
+  left:      0;
+  color:     var(--c-muted);
+  font-size: 9px;
+}
+
+/* ============================================================
+   Contact View
+   ============================================================ */
+
+.contact-heading {
+  font-size:      clamp(64px, 10vw, 120px);
+  font-weight:    700;
+  letter-spacing: -0.04em;
+  line-height:    0.88;
+  color:          var(--c-text);
+}
+
+.contact-links {
+  display:        flex;
+  flex-direction: column;
+  gap:            14px;
+}
+
+.contact-link {
+  display:     inline-flex;
+  align-items: center;
+  gap:         12px;
+
+  font-family:    var(--f-mono);
+  font-size:      11px;
+  letter-spacing: 0.04em;
+  color:          var(--c-dim);
+  width:          fit-content;
+
+  transition: color 0.2s ease;
+}
+
+.contact-link .icon-box {
+  display: none;
+}
+
+.contact-link::before {
+  content:     '→';
+  font-family: var(--f-display);
+  font-size:   16px;
+  color:       var(--c-muted);
+  transition:  transform 0.2s ease, color 0.2s ease;
+  display:     inline-block;
+  line-height: 1;
+}
+
+.contact-link:hover             { color: var(--c-text); }
+.contact-link:hover::before     { color: var(--c-text); transform: translateX(4px); }
+
+
+
+/* ============================================================
+   Empty state
+   ============================================================ */
+
+.empty-state {
+  padding:        32px 0;
+  font-family:    var(--f-mono);
+  font-size:      11px;
+  color:          var(--c-muted);
+  letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   Loader Overlay
+   Covers the entire viewport on initial load then fades away.
+   ============================================================ */
+
+.loader-overlay {
+  position: fixed;
+  inset:    0;
+  z-index:  100;
+
+  background-color: var(--c-bg);
+
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             8px;
+
+  opacity:    1;
+  transition: opacity 0.5s ease;
+}
+
+.loader-overlay.is-hidden {
+  opacity:        0;
+  pointer-events: none;
+}
+
+/* Three pulsing squares (Swiss / blueprint aesthetic) */
+.loader-dot {
+  width:         4px;
+  height:        4px;
+  background:    var(--c-text);
+  border-radius: 0;
+  animation:     dot-pulse 1.2s ease-in-out infinite;
+}
+
+.loader-dot:nth-child(1) { animation-delay: 0s;    }
+.loader-dot:nth-child(2) { animation-delay: 0.18s; }
+.loader-dot:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 0.15; transform: scale(0.7);  }
+  50%      { opacity: 1;    transform: scale(1.25); }
+}
+
+/* ============================================================
+   Responsive Breakpoints
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .view-inner {
+    padding: 48px 40px calc(var(--dock-h) + 40px);
+  }
+
+  .view-landing {
+    padding: 36px 36px calc(var(--dock-h) + 36px);
+  }
+
+  .view-landing::before { left: 36px; top: 36px; }
+  .view-landing::after  { right: 36px; bottom: calc(var(--dock-h) + 36px); }
+
+  .landing-name-block {
+    flex-direction:  column;
+    align-items:     flex-start;
+    justify-content: space-between;
+    gap:             0;
+  }
+
+  .landing-spec {
+    align-self:     flex-end;
+    flex-direction: row;
+    flex-wrap:      wrap;
+    gap:            12px 20px;
+  }
+
+  .spec-item--rule { display: none; }
+
+  .landing-sep  { margin: 20px 0; }
+  .landing-rule { margin: 20px 0 18px; }
+
+  .skills-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --dock-h: 44px;
+  }
+
+  .view-inner {
+    padding: 36px 24px calc(var(--dock-h) + 32px);
+  }
+
+  .view-landing {
+    padding: 28px 24px calc(var(--dock-h) + 28px);
+  }
+
+  .view-landing::before { left: 24px; top: 28px; }
+  .view-landing::after  { right: 24px; bottom: calc(var(--dock-h) + 28px); }
+
+  .landing-sep  { margin: 16px 0; }
+  .landing-rule { margin: 16px 0 14px; }
+
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .dock-btn {
+    font-size:      8px;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* ============================================================
+   css.gg icons — ensure inline-block baseline
+   ============================================================ */
+
+[class^="gg-"],
+[class*=" gg-"] {
+  display: inline-block;
+}

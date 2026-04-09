@@ -1,6 +1,6 @@
 # Hi there, I'm Anss Khaled! 👋
 
-I'm a Full-Stack developer with expertise in building robust and scalable front-end and back-end systems using a variety of technologies. My focus is on developing web applications that are not only visually appealing but also highly functional and optimized for performance.
+I'm a Software Engineer with expertise in building robust and scalable front-end and back-end systems using a variety of technologies. My focus is on developing web applications that are not only visually appealing but also highly functional and optimized for performance.
 
 My goal as a full-stack engineer is to deliver high-quality products that meet my clients' requirements and exceed their expectations. If you're looking for someone who can help you build your next web application, feel free to contact me at [anss.khaled00@gmail.com](mailto:anss.khaled00@gmail.com) or connect with me on [LinkedIn](https://www.linkedin.com/in/ansskfarouk/).
 

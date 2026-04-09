@@ -1,0 +1,145 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "basics": {
+    "name": "Anss Khaled Farouk",
+    "label": "Software Engineer",
+    "email": "anss.khaled00@gmail.com",
+    "phone": "+20 1016329993",
+    "url": "https://ansskf.github.io",
+    "summary": "Software Engineer with expertise in building robust and scalable front-end and back-end systems. My focus is on developing web applications that are not only visually appealing but also highly functional and optimized for performance.",
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "ansskfarouk",
+        "url": "https://www.linkedin.com/in/ansskfarouk/"
+      },
+      {
+        "network": "GitHub",
+        "username": "AnssKF",
+        "url": "https://github.com/AnssKF"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Pixelogic Media",
+      "position": "Senior Software Engineer",
+      "startDate": "2024-09",
+      "summary": "Developing and maintaining scalable web applications using Ruby on Rails for back-end and ReactJS for front-end. Collaborating with cross-functional teams to deliver high-quality software products.",
+      "highlights": [
+        "Built and maintained scalable web applications with Ruby on Rails and ReactJS",
+        "Collaborated with cross-functional teams to deliver high-quality software products"
+      ]
+    },
+    {
+      "name": "ShakaCode",
+      "position": "Software Developer",
+      "startDate": "2022-04",
+      "endDate": "2024-09",
+      "summary": "Remote full-stack developer specialized in constructing and overseeing large-scale software applications using Ruby on Rails, ReactJS, and PostgreSQL.",
+      "highlights": [
+        "Assisted clients such as Blade, Hichee, and Clozemaster in building, maintaining, and upgrading their systems",
+        "Built robust and scalable solutions using Ruby on Rails, ReactJS, and PostgreSQL"
+      ]
+    },
+    {
+      "name": "Yodawy",
+      "position": "Software Developer",
+      "startDate": "2020-11",
+      "endDate": "2022-04",
+      "summary": "Specialized in constructing and managing web applications with a microservices architecture using PHP Laravel, MySQL, Docker, and Laravel Livewire for server-side rendering.",
+      "highlights": [
+        "Integrated an API caching module improving system performance",
+        "Implemented spatial operations with Google Maps integration",
+        "Developed in-company dashboards providing a centralized platform to oversee and maintain various microservices"
+      ]
+    },
+    {
+      "name": "Freelance",
+      "position": "Full-Stack Web/App Developer",
+      "summary": "Web/App Developer focusing on designing, developing, and efficiently maintaining RESTful backend systems. Specialized in building responsive single-page applications.",
+      "highlights": [
+        "Designed and developed RESTful backend systems",
+        "Built responsive single-page applications across various technologies"
+      ]
+    },
+    {
+      "name": "BBI Consultancy",
+      "position": "Data Science and Machine Learning Intern",
+      "startDate": "2020-01",
+      "endDate": "2020-03",
+      "summary": "Deepened understanding of cutting-edge Machine Learning and Artificial Intelligence models and algorithms. Leveraged the latest technologies to enhance knowledge and practical skills in the field.",
+      "highlights": [
+        "Studied and applied cutting-edge Machine Learning and AI models and algorithms"
+      ]
+    },
+    {
+      "name": "EasyKash",
+      "position": "Front-end Developer Intern",
+      "startDate": "2019-06",
+      "endDate": "2019-07",
+      "summary": "Contributed to main projects in an Agile Scrum environment using Angular 2+ and Ionic4 technologies.",
+      "highlights": [
+        "Gained hands-on experience with Angular 2+ and Ionic4",
+        "Worked in an Agile Scrum environment"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Ain Shams University",
+      "url": "https://www.asu.edu.eg/",
+      "area": "Computer and System Engineering",
+      "studyType": "Bachelor's Degree",
+      "endDate": "2020",
+      "score": "Very Good",
+      "courses": []
+    }
+  ],
+  "skills": [
+    {
+      "name": "Languages",
+      "level": "Expert",
+      "keywords": ["JavaScript", "TypeScript", "PHP", "Ruby", "Python"]
+    },
+    {
+      "name": "Backend",
+      "level": "Expert",
+      "keywords": ["Laravel", "Ruby on Rails", "Node.js", "Django", "Redis"]
+    },
+    {
+      "name": "Frontend",
+      "level": "Expert",
+      "keywords": ["React", "Redux", "Angular", "Alpine.js", "jQuery", "HTML", "CSS", "Sass", "Tailwind CSS", "Bootstrap"]
+    },
+    {
+      "name": "Databases",
+      "level": "Advanced",
+      "keywords": ["MySQL", "PostgreSQL"]
+    },
+    {
+      "name": "Tools & DevOps",
+      "level": "Advanced",
+      "keywords": ["Git", "GitHub", "GitLab", "Docker", "GraphQL", "Electron", "VS Code", "Linux"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Chatbot for Information Retrieval System",
+      "description": "Engineered an innovative information retrieval system capable of extracting crucial information from unstructured and raw data in document formats such as PDFs. Designed to assist users in answering domain-specific queries within closed domain areas.",
+      "highlights": [
+        "Fine-tuned BERT NLP model using the SQuAD dataset for analyzing, extracting, and ranking answers",
+        "Used RASA chatbot framework as the backend for natural language understanding and seamless interactions",
+        "Graduation project in collaboration with Mentor Graphics"
+      ],
+      "keywords": ["NLP", "BERT", "Python", "RASA", "Machine Learning"],
+      "type": "application"
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Embedded Systems Diploma, AVR Architecture",
+      "summary": "Completed an Embedded Systems Diploma focusing on AVR Architecture, acquiring hands-on experience in developing efficient drivers for Atmega32 internal modules. Gained proficiency in working with AVR architecture and embedded systems development. 120 hours total."
+    }
+  ]
+}
