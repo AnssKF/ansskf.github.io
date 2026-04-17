@@ -161,6 +161,9 @@
               class="landing-link"
               :href="'mailto:' + (resume?.basics?.email ?? '')"
               x-show="resume?.basics?.email"
+              @mouseenter="showLinkPopup($event, 'mailto:' + (resume?.basics?.email ?? ''))"
+              @mouseleave="hideLinkPopup()"
+              @contextmenu.prevent="showLinkPopup($event, 'mailto:' + (resume?.basics?.email ?? ''))"
             >
               <span class="icon-box"><i class="gg-mail" aria-hidden="true"></i></span>
               <span x-text="resume?.basics?.email"></span>
@@ -176,6 +179,9 @@
                 :href="profile.url"
                 target="_blank"
                 rel="noopener noreferrer"
+                @mouseenter="showLinkPopup($event, profile.url)"
+                @mouseleave="hideLinkPopup()"
+                @contextmenu.prevent="showLinkPopup($event, profile.url)"
               >
                 <span class="icon-box"><i :class="'gg-' + profileIcon(profile.network)" aria-hidden="true"></i></span>
                 <span x-text="profile.network + ' / ' + profile.username"></span>
@@ -188,6 +194,9 @@
               href="https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view"
               target="_blank"
               rel="noopener noreferrer"
+              @mouseenter="showLinkPopup($event, 'https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view')"
+              @mouseleave="hideLinkPopup()"
+              @contextmenu.prevent="showLinkPopup($event, 'https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view')"
             >
               <span class="icon-box"><i class="gg-file-document" aria-hidden="true"></i></span>
               <span>Resume / CV</span>
@@ -509,6 +518,38 @@
       </button>
     </template>
   </nav>
+
+  <!-- ── Link Action Popup ──────────────────────────────────── -->
+  <div
+    class="link-popup"
+    :class="{ 'is-visible': linkPopup.show }"
+    :style="`left: ${linkPopup.x}px; top: ${linkPopup.y}px`"
+    @mouseenter="keepLinkPopup()"
+    @mouseleave="hideLinkPopup()"
+    @click.outside="hideLinkPopup(true)"
+    role="dialog"
+    aria-label="Link actions"
+  >
+    <button
+      class="link-popup-btn"
+      @click.stop="copyLink()"
+      type="button"
+    >
+      <i class="gg-copy" aria-hidden="true"></i>
+      <span x-text="linkPopup.copied ? 'Copied!' : 'Copy'"></span>
+    </button>
+    <span class="link-popup-sep" aria-hidden="true"></span>
+    <a
+      class="link-popup-btn"
+      :href="linkPopup.href"
+      :target="linkPopup.href.startsWith('mailto:') ? '_self' : '_blank'"
+      rel="noopener noreferrer"
+      @click.stop="hideLinkPopup(true)"
+    >
+      <i class="gg-arrow-top-right" aria-hidden="true"></i>
+      <span>Open</span>
+    </a>
+  </div>
 
   <!-- Script loading order: app.js first (defines portfolio()), then Alpine -->
   <script src="app.js" defer></script>

@@ -305,7 +305,8 @@ function portfolio() {
   // never wraps them (required for private class fields to work).
   const themeService  = new ThemeService();
   const resumeService = new ResumeService();
-  let   router        = null;
+  let   router          = null;
+  let   _hidePopupTimer = null;   // debounce timer for hiding the link popup
 
   return {
     /* ── State ──────────────────────────────────────────────── */
@@ -336,6 +337,16 @@ function portfolio() {
 
     /** Active theme: 'dark' | 'light' | 'system' */
     currentTheme: 'system',
+
+    /**
+     * State for the floating link-action popup shown on hover / long-press.
+     * `href`   — target URL (may be a mailto: string)
+     * `x/y`   — screen coordinates of the anchor element's top-left corner
+     * `copied` — transient flag that drives the "Copied!" label feedback
+     */
+    linkPopup: { show: false, href: '', x: 0, y: 0, copied: false },
+
+    /** Internal timers — kept off the Alpine reactive surface via a closure var */
 
     /* ── Lifecycle ──────────────────────────────────────────── */
 
@@ -444,6 +455,50 @@ function portfolio() {
      */
     formatDate(dateStr) {
       return resumeService.formatDate(dateStr);
+    },
+
+    /* ── Link-action popup ──────────────────────────────────── */
+
+    /**
+     * Show the popup anchored to the element that fired `event`.
+     * Cancels any pending hide timer so moving between popup ↔ link is smooth.
+     * @param {MouseEvent|TouchEvent} event
+     * @param {string} href  Full URL or mailto: string
+     */
+    showLinkPopup(event, href) {
+      clearTimeout(_hidePopupTimer);
+      const rect    = event.currentTarget.getBoundingClientRect();
+      this.linkPopup = { show: true, href, x: rect.left, y: rect.top, copied: false };
+    },
+
+    /**
+     * Defer hiding so the user can mouse from the link into the popup without
+     * it disappearing.  Pass `true` to close immediately (e.g. after "Open").
+     * @param {boolean} [immediate=false]
+     */
+    hideLinkPopup(immediate = false) {
+      if (immediate) {
+        this.linkPopup.show = false;
+      } else {
+        _hidePopupTimer = setTimeout(() => { this.linkPopup.show = false; }, 220);
+      }
+    },
+
+    /** Called when the cursor enters the popup itself — cancels the hide timer. */
+    keepLinkPopup() {
+      clearTimeout(_hidePopupTimer);
+    },
+
+    /** Write the link (or bare email address) to the clipboard. */
+    async copyLink() {
+      const text = this.linkPopup.href.startsWith('mailto:')
+        ? this.linkPopup.href.slice(7)
+        : this.linkPopup.href;
+      try {
+        await navigator.clipboard.writeText(text);
+        this.linkPopup.copied = true;
+        setTimeout(() => { this.linkPopup.copied = false; }, 1500);
+      } catch { /* clipboard unavailable — fail silently */ }
     },
 
     /* ── Private helpers ────────────────────────────────────── */
