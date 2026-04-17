@@ -19,6 +19,20 @@
   <link rel="preconnect" href="https://unpkg.com" crossorigin />
   <link rel="stylesheet" href="https://unpkg.com/css.gg@2.0.0/icons/all.css" />
 
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Theme: applied before render to prevent flash -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('portfolio-theme') || 'system';
+      if (t === 'system') {
+        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
   <!-- Site styles -->
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -344,7 +358,82 @@
       </div>
     </section>
 
+    <!-- ── View 6: Settings ─────────────────────────────── -->
+    <section
+      class="view settings-view"
+      :class="{
+        'is-active':  currentView  === 'settings',
+        'is-exiting': exitingView  === 'settings'
+      }"
+      aria-label="Settings"
+    >
+      <div class="view-inner">
+        <h2 class="section-label" data-index="//">Settings</h2>
+
+        <!-- Theme Section -->
+        <div class="settings-section">
+          <h3 class="settings-section-label">Theme</h3>
+          <div class="theme-options">
+
+            <button
+              class="theme-option"
+              :class="{ 'is-active': currentTheme === 'light' }"
+              @click="setTheme('light')"
+              type="button"
+              aria-label="Light theme"
+            >
+              <span class="theme-option-icon">
+                <i class="gg-sun" aria-hidden="true"></i>
+              </span>
+              <span class="theme-option-label">Light</span>
+            </button>
+
+            <button
+              class="theme-option"
+              :class="{ 'is-active': currentTheme === 'dark' }"
+              @click="setTheme('dark')"
+              type="button"
+              aria-label="Dark theme"
+            >
+              <span class="theme-option-icon">
+                <i class="gg-moon" aria-hidden="true"></i>
+              </span>
+              <span class="theme-option-label">Dark</span>
+            </button>
+
+            <button
+              class="theme-option"
+              :class="{ 'is-active': currentTheme === 'system' }"
+              @click="setTheme('system')"
+              type="button"
+              aria-label="System theme"
+            >
+              <span class="theme-option-icon">
+                <i class="gg-laptop" aria-hidden="true"></i>
+              </span>
+              <span class="theme-option-label">System</span>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
+
+  <!-- ── Settings Toggle ─────────────────────────────────── -->
+  <button
+    class="settings-btn"
+    :class="{ 'is-open': currentView === 'settings' }"
+    @click="toggleSettings()"
+    :aria-label="currentView === 'settings' ? 'Close settings' : 'Open settings'"
+    :aria-expanded="currentView === 'settings'"
+    x-show="!loading"
+    type="button"
+  >
+    <i :class="currentView === 'settings' ? 'gg-close' : 'gg-options'" aria-hidden="true"></i>
+  </button>
 
   <!-- ── Floating Dock Navigation ────────────────────────── -->
   <nav class="dock" aria-label="Site navigation">

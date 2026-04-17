@@ -26,6 +26,18 @@ function portfolio() {
      */
     exitingView: null,
 
+    /** View to return to when closing settings */
+    previousView: 'landing',
+
+    /** Active theme: 'dark' | 'light' | 'system' */
+    currentTheme: 'system',
+
+    /** MediaQueryList instance for system theme tracking */
+    _themeMediaQuery: null,
+
+    /** Bound handler so it can be removed on teardown */
+    _systemThemeHandler: null,
+
     /** Navigation items — icon names map to css.gg class suffixes */
     navItems: [
       { view: 'landing',    icon: 'home',      label: 'Home'       },
@@ -38,6 +50,16 @@ function portfolio() {
     /* ── Lifecycle ──────────────────────────────────────────── */
 
     async init() {
+      // Apply saved theme immediately (loader overlay is still covering the screen)
+      const savedTheme = localStorage.getItem('portfolio-theme') || 'system';
+      this.currentTheme = savedTheme;
+      this._applyTheme(savedTheme);
+
+      // Close settings on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.currentView === 'settings') this.toggleSettings();
+      });
+
       try {
         const res = await fetch('./resume.json');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -134,6 +156,55 @@ function portfolio() {
         return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
       } catch {
         return dateStr;
+      }
+    },
+
+    /**
+     * Open or close settings using the standard switchView animation.
+     * Remembers the previous view to return to on close.
+     */
+    toggleSettings() {
+      if (this.currentView === 'settings') {
+        this.switchView(this.previousView);
+      } else {
+        this.previousView = this.currentView;
+        this.switchView('settings');
+      }
+    },
+
+    /**
+     * Persist and apply a theme: 'dark' | 'light' | 'system'.
+     */
+    setTheme(theme) {
+      this.currentTheme = theme;
+      localStorage.setItem('portfolio-theme', theme);
+      this._applyTheme(theme);
+    },
+
+    /**
+     * Write data-theme on <html> and wire / unwire the system
+     * media-query listener when needed.
+     */
+    _applyTheme(theme) {
+      const root = document.documentElement;
+
+      // Clean up any existing system listener
+      if (this._themeMediaQuery && this._systemThemeHandler) {
+        this._themeMediaQuery.removeEventListener('change', this._systemThemeHandler);
+        this._themeMediaQuery    = null;
+        this._systemThemeHandler = null;
+      }
+
+      if (theme === 'system') {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        this._systemThemeHandler = (e) => {
+          document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        };
+        mq.addEventListener('change', this._systemThemeHandler);
+        this._themeMediaQuery = mq;
+        root.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+      } else {
+        root.setAttribute('data-theme', theme);
       }
     },
 
