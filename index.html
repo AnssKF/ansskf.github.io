@@ -208,7 +208,7 @@
       aria-label="Education"
     >
       <div class="view-inner">
-        <h2 class="section-label" data-index="02">Education</h2>
+        <h2 class="section-label" :data-index="views.find(v => v.id === 'education')?.sectionIndex">Education</h2>
 
         <div x-show="!(resume?.education?.length)" class="empty-state">
           No education entries found.
@@ -269,7 +269,7 @@
       aria-label="Skills"
     >
       <div class="view-inner">
-        <h2 class="section-label" data-index="03">Skills</h2>
+        <h2 class="section-label" :data-index="views.find(v => v.id === 'skills')?.sectionIndex">Skills</h2>
 
         <div class="skills-grid">
           <template
@@ -299,7 +299,7 @@
       aria-label="Work Experience"
     >
       <div class="view-inner">
-        <h2 class="section-label" data-index="04">Experience</h2>
+        <h2 class="section-label" :data-index="views.find(v => v.id === 'experience')?.sectionIndex">Experience</h2>
 
         <div x-show="!(resume?.work?.length)" class="empty-state">
           Work history coming soon.
@@ -427,7 +427,7 @@
       aria-label="Settings"
     >
       <div class="view-inner">
-        <h2 class="section-label" data-index="//">Settings</h2>
+        <h2 class="section-label" :data-index="views.find(v => v.id === 'settings')?.sectionIndex">Settings</h2>
 
         <!-- Theme Section -->
         <div class="settings-section">
@@ -496,16 +496,16 @@
 
   <!-- ── Floating Dock Navigation ────────────────────────── -->
   <nav class="dock" aria-label="Site navigation">
-    <template x-for="item in navItems" :key="item.view">
+    <template x-for="item in navItems" :key="item.id">
       <button
         class="dock-btn"
-        :class="{ 'is-active': currentView === item.view }"
-        @click="switchView(item.view)"
-        :aria-label="item.label"
-        :aria-current="currentView === item.view ? 'page' : false"
+        :class="{ 'is-active': currentView === item.id }"
+        @click="switchView(item.id)"
+        :aria-label="item.name"
+        :aria-current="currentView === item.id ? 'page' : false"
         type="button"
       >
-        <span x-text="item.label"></span>
+        <span x-text="item.name"></span>
       </button>
     </template>
   </nav>
