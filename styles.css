@@ -438,13 +438,15 @@ button {
   margin:     28px 0 22px;
 }
 
-.landing-links {
+.landing-links,
+.contact-links {
   display:        flex;
   flex-direction: column;
   gap:            14px;
 }
 
-.landing-link {
+.landing-link,
+.contact-link {
   display:     inline-flex;
   align-items: center;
   gap:         12px;
@@ -458,11 +460,13 @@ button {
   transition: color 0.2s ease;
 }
 
-.landing-link .icon-box {
+.landing-link .icon-box,
+.contact-link .icon-box {
   display: none;
 }
 
-.landing-link::before {
+.landing-link::before,
+.contact-link::before {
   content:     '→';
   font-family: var(--f-display);
   font-size:   16px;
@@ -472,8 +476,10 @@ button {
   line-height: 1;
 }
 
-.landing-link:hover             { color: var(--c-text); }
-.landing-link:hover::before     { color: var(--c-text); transform: translateX(4px); }
+.landing-link:hover,
+.contact-link:hover             { color: var(--c-text); }
+.landing-link:hover::before,
+.contact-link:hover::before     { color: var(--c-text); transform: translateX(4px); }
 
 /* ============================================================
    Link Action Popup
@@ -650,42 +656,7 @@ button {
   color:          var(--c-text);
 }
 
-.contact-links {
-  display:        flex;
-  flex-direction: column;
-  gap:            14px;
-}
 
-.contact-link {
-  display:     inline-flex;
-  align-items: center;
-  gap:         12px;
-
-  font-family:    var(--f-mono);
-  font-size:      11px;
-  letter-spacing: 0.04em;
-  color:          var(--c-dim);
-  width:          fit-content;
-
-  transition: color 0.2s ease;
-}
-
-.contact-link .icon-box {
-  display: none;
-}
-
-.contact-link::before {
-  content:     '→';
-  font-family: var(--f-display);
-  font-size:   16px;
-  color:       var(--c-muted);
-  transition:  transform 0.2s ease, color 0.2s ease;
-  display:     inline-block;
-  line-height: 1;
-}
-
-.contact-link:hover             { color: var(--c-text); }
-.contact-link:hover::before     { color: var(--c-text); transform: translateX(4px); }
 
 
 
