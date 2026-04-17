@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+    SEO FALLBACKS — these initial values are read by crawlers before JS executes.
+    resume.json is the single source of truth; _syncDocumentMeta() in app.js
+    overwrites all of these at runtime from resume.json data.
+    Keep them in sync with resume.json manually only when changing basics fields.
+  -->
   <meta name="description" content="Anss Khaled Farouk — Senior Software Engineer specialising in Ruby on Rails, ReactJS, and full-stack web development. Portfolio and contact." />
   <meta name="robots" content="index, follow" />
   <meta name="color-scheme" content="dark" />
@@ -60,11 +66,11 @@
     "hasOccupation": {
       "@type": "Occupation",
       "name": "Senior Software Engineer",
+      "skills": "Ruby on Rails, ReactJS, PostgreSQL, PHP Laravel, Full-Stack Web Development, Microservices Architecture, Docker",
       "occupationLocation": {
         "@type": "Country",
         "name": "Egypt"
-      },
-      "skills": "Ruby on Rails, ReactJS, PostgreSQL, Docker"
+      }
     }
   }
   </script>
@@ -194,12 +200,13 @@
             <!-- Resume / CV -->
             <a
               class="landing-link"
-              href="https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view"
+              :href="resume?.basics?.resumeUrl ?? '#'"
               target="_blank"
               rel="noopener noreferrer"
-              @mouseenter="showLinkPopup($event, 'https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view')"
+              x-show="resume?.basics?.resumeUrl"
+              @mouseenter="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
               @mouseleave="hideLinkPopup()"
-              @contextmenu.prevent="showLinkPopup($event, 'https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view')"
+              @contextmenu.prevent="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
             >
               <span class="icon-box"><i class="gg-file-document" aria-hidden="true"></i></span>
               <span>Resume / CV</span>
@@ -375,7 +382,7 @@
       <div class="view-landing">
 
         <div class="landing-header">
-          <span class="mono-label">05 — Contact</span>
+          <span class="mono-label" x-text="(views.find(v => v.id === 'contact')?.sectionIndex ?? '05') + ' — Contact'"></span>
         </div>
 
         <span class="landing-sep" aria-hidden="true"></span>
@@ -422,12 +429,13 @@
             <!-- Resume / CV -->
             <a
               class="contact-link"
-              href="https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view"
+              :href="resume?.basics?.resumeUrl ?? '#'"
               target="_blank"
               rel="noopener noreferrer"
-              @mouseenter="showLinkPopup($event, 'https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view')"
+              x-show="resume?.basics?.resumeUrl"
+              @mouseenter="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
               @mouseleave="hideLinkPopup()"
-              @contextmenu.prevent="showLinkPopup($event, 'https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view')"
+              @contextmenu.prevent="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
             >
               <span class="icon-box"><i class="gg-file-document" aria-hidden="true"></i></span>
               <span>Resume / CV</span>

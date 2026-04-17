@@ -503,24 +503,84 @@ function portfolio() {
 
     /* ── Private helpers ────────────────────────────────────── */
 
-    /** Sync <title> and <meta description> from loaded resume basics. */
+    /**
+     * Sync <title>, all <meta>, Open Graph, Twitter Card, and JSON-LD
+     * from loaded resume data.  resume.json is the single source of truth;
+     * the static values in index.html serve only as crawler fallbacks.
+     */
     _syncDocumentMeta() {
-      const { name = '', label = '', summary } = this.resume?.basics ?? {};
+      const basics   = this.resume?.basics ?? {};
+      const work     = this.resume?.work   ?? [];
+      const skills   = this.resume?.skills ?? [];
 
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) {
-        metaDesc.setAttribute(
-          'content',
-          summary ||
-          [name, label].filter(Boolean).join(' — ') ||
-          metaDesc.getAttribute('content'),
-        );
-      }
+      const {
+        name = '', label = '', summary = '',
+        email = '', phone = '', url = '',
+        location = {}, profiles = [],
+      } = basics;
 
-      const title = document.querySelector('title');
-      if (title && name) {
-        title.textContent = [name, label].filter(Boolean).join(' — ');
-      }
+      const nameParts      = name.split(' ').filter(Boolean);
+      const firstName      = nameParts[0]            ?? '';
+      const lastName       = nameParts.slice(1).join(' ');
+      const currentJob     = work[0] ?? {};
+      const jobTitle       = currentJob.position ?? label;
+      const employer       = currentJob.name     ?? '';
+      const country        = location.country    ?? '';
+      const description    = summary || [name, jobTitle].filter(Boolean).join(' — ');
+      const fullTitle      = [name, jobTitle].filter(Boolean).join(' — ');
+      const allKeywords    = skills.flatMap(g => g.keywords ?? []);
+
+      // ── Helper: set a single <meta> attribute ──────────────────────────
+      const setMeta = (attr, val, content) => {
+        if (!content) return;
+        const el = document.querySelector(`meta[${attr}="${val}"]`);
+        if (el) el.setAttribute('content', content);
+      };
+
+      // <title>
+      const titleEl = document.querySelector('title');
+      if (titleEl && name) titleEl.textContent = fullTitle;
+
+      // Standard meta
+      setMeta('name',     'description',        description);
+
+      // Open Graph
+      setMeta('property', 'og:title',           fullTitle);
+      setMeta('property', 'og:description',     description);
+      setMeta('property', 'og:url',             url);
+      setMeta('property', 'profile:first_name', firstName);
+      setMeta('property', 'profile:last_name',  lastName);
+
+      // Twitter / X Card
+      setMeta('name', 'twitter:title',       fullTitle);
+      setMeta('name', 'twitter:description', description);
+
+      // JSON-LD — regenerate entirely from resume data
+      const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type':    'Person',
+        ...(name                ? { name }                                              : {}),
+        ...(nameParts.length > 1 ? { alternateName: nameParts.slice(0, 2).join(' ') } : {}),
+        ...(url                 ? { url }                                               : {}),
+        ...(email               ? { email }                                             : {}),
+        ...(phone               ? { telephone: phone }                                  : {}),
+        ...(jobTitle            ? { jobTitle }                                          : {}),
+        ...(description         ? { description }                                       : {}),
+        ...(profiles.length     ? { sameAs: profiles.map(p => p.url).filter(Boolean) } : {}),
+        ...(allKeywords.length  ? { knowsAbout: allKeywords }                          : {}),
+        ...(employer            ? { worksFor: { '@type': 'Organization', name: employer } } : {}),
+        ...(jobTitle            ? {
+          hasOccupation: {
+            '@type': 'Occupation',
+            name:    jobTitle,
+            ...(allKeywords.length ? { skills: allKeywords.slice(0, 4).join(', ') }    : {}),
+            ...(country            ? { occupationLocation: { '@type': 'Country', name: country } } : {}),
+          },
+        } : {}),
+      };
+
+      const ldEl = document.querySelector('script[type="application/ld+json"]');
+      if (ldEl) ldEl.textContent = JSON.stringify(jsonLd, null, 2);
     },
 
     _sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms)),

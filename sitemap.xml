@@ -2,31 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://ansskf.github.io/#home</loc>
+    <loc>https://anssk.me/#home</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://ansskf.github.io/#education</loc>
+    <loc>https://anssk.me/#education</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://ansskf.github.io/#skills</loc>
+    <loc>https://anssk.me/#skills</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://ansskf.github.io/#experience</loc>
+    <loc>https://anssk.me/#experience</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://ansskf.github.io/#contact</loc>
+    <loc>https://anssk.me/#contact</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>

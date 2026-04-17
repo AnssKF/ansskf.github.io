@@ -5,7 +5,13 @@
     "label": "Software Engineer",
     "email": "anss.khaled00@gmail.com",
     "phone": "+20 1016329993",
-    "url": "https://ansskf.github.io",
+    "url": "https://anssk.me",
+    "resumeUrl": "https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view",
+    "location": {
+      "city": "Cairo",
+      "countryCode": "EG",
+      "country": "Egypt"
+    },
     "summary": "Software Engineer with expertise in building robust and scalable front-end and back-end systems. My focus is on developing web applications that are not only visually appealing but also highly functional and optimized for performance.",
     "profiles": [
       {
