@@ -31,21 +31,26 @@
       "name": "Pixelogic Media",
       "position": "Senior Software Engineer",
       "startDate": "2024-09",
-      "summary": "Developing and maintaining scalable web applications using Ruby on Rails for back-end and ReactJS for front-end. Collaborating with cross-functional teams to deliver high-quality software products.",
+      "summary": "Building and evolving a complex media platform using Ruby on Rails and ReactJS. Leading technical initiatives end-to-end — from architectural decisions to delivery — with a focus on reliability, performance, and clean, scalable code.",
       "highlights": [
-        "Built and maintained scalable web applications with Ruby on Rails and ReactJS",
-        "Collaborated with cross-functional teams to deliver high-quality software products"
+        "Led an end-to-end replacement of the core rich-text editor, managing the project from proof-of-concept through execution; redesigned the component architecture to separate layers and hide editor-specific implementation details",
+        "Integrated OpenSearch to power advanced search functionality, building a reliable data pipeline that syncs and enriches PostgreSQL records through Kafka topics",
+        "Refactored critical React and Ruby on Rails components, directly reducing production bugs, optimising performance, and improving overall user and developer experience",
+        "Developed complex, data-sensitive features with strict focus on writing atomic, highly reusable, and scalable code"
       ]
     },
     {
       "name": "ShakaCode",
-      "position": "Software Developer",
+      "position": "Software Engineer",
       "startDate": "2022-04",
       "endDate": "2024-09",
-      "summary": "Remote full-stack developer specialized in constructing and overseeing large-scale software applications using Ruby on Rails, ReactJS, and PostgreSQL.",
+      "summary": "Remote full-stack consultant working across multiple client products simultaneously. Specialised in Ruby on Rails, ReactJS, and PostgreSQL — shipping features, driving migrations, and integrating third-party systems under tight timelines and varying business contexts.",
       "highlights": [
-        "Assisted clients such as Blade, Hichee, and Clozemaster in building, maintaining, and upgrading their systems",
-        "Built robust and scalable solutions using Ruby on Rails, ReactJS, and PostgreSQL"
+        "Consulted for multiple clients — including Blade, Hichee, and Clozemaster — building and maintaining applications using Ruby on Rails, ReactJS, and PostgreSQL",
+        "Balanced multiple projects simultaneously, quickly adapting to new business logic and tech stacks",
+        "Executed a complete system migration, rebuilding a legacy Ruby/ERB application into a modern, fully API-based architecture",
+        "Built a complete SEO project to improve application search rankings, collaborating with an external team for data collection and execution",
+        "Integrated third-party services like Klaviyo to support marketing campaigns and customer outreach"
       ]
     },
     {
@@ -53,17 +58,18 @@
       "position": "Software Developer",
       "startDate": "2020-11",
       "endDate": "2022-04",
-      "summary": "Specialized in constructing and managing web applications with a microservices architecture using PHP Laravel, MySQL, Docker, and Laravel Livewire for server-side rendering.",
+      "summary": "Maintained and extended core microservices for a healthcare platform built on PHP Laravel and MySQL. Improved system performance, and built internal tooling to support engineering and operations teams.",
       "highlights": [
-        "Integrated an API caching module improving system performance",
-        "Implemented spatial operations with Google Maps integration",
-        "Developed in-company dashboards providing a centralized platform to oversee and maintain various microservices"
+        "Maintained core microservices in PHP Laravel, directly supporting the main customer-facing application; refactored large sections of legacy code into modern, reliable components",
+        "Built custom internal dashboards with Laravel Livewire for data and service management",
+        "Optimised API performance system-wide through a custom-built, highly reusable API caching module with expiration and tag control",
+        "Implemented interactive spatial operations utilising Google Maps and MySQL spatial features, allowing teams to seamlessly view and edit geographic data"
       ]
     },
     {
       "name": "Freelance",
       "position": "Full-Stack Web/App Developer",
-      "summary": "Web/App Developer focusing on designing, developing, and efficiently maintaining RESTful backend systems. Specialized in building responsive single-page applications.",
+      "summary": "Designed, developed, and maintained full-stack web and mobile applications for various clients. Focused on delivering clean RESTful APIs and responsive, browser-based single-page applications across a range of technologies and domains.",
       "highlights": [
         "Designed and developed RESTful backend systems",
         "Built responsive single-page applications across various technologies"
@@ -74,7 +80,7 @@
       "position": "Data Science and Machine Learning Intern",
       "startDate": "2020-01",
       "endDate": "2020-03",
-      "summary": "Deepened understanding of cutting-edge Machine Learning and Artificial Intelligence models and algorithms. Leveraged the latest technologies to enhance knowledge and practical skills in the field.",
+      "summary": "Studied and applied modern Machine Learning and AI models in a professional consulting environment, building practical foundations in data science alongside exposure to real-world business use cases.",
       "highlights": [
         "Studied and applied cutting-edge Machine Learning and AI models and algorithms"
       ]
@@ -84,7 +90,7 @@
       "position": "Front-end Developer Intern",
       "startDate": "2019-06",
       "endDate": "2019-07",
-      "summary": "Contributed to main projects in an Agile Scrum environment using Angular 2+ and Ionic4 technologies.",
+      "summary": "Contributed to production front-end development using Angular 2+ and Ionic4 within an Agile Scrum team, gaining hands-on experience in iterative delivery and cross-functional collaboration.",
       "highlights": [
         "Gained hands-on experience with Angular 2+ and Ionic4",
         "Worked in an Agile Scrum environment"
@@ -126,7 +132,7 @@
     {
       "name": "Tools & DevOps",
       "level": "Advanced",
-      "keywords": ["Git", "GitHub", "GitLab", "Docker", "GraphQL", "Electron", "VS Code", "Linux"]
+      "keywords": ["Git", "GitHub", "GitLab", "Docker", "GraphQL", "Electron", "VS Code", "Linux", "OOP"]
     }
   ],
   "projects": [
