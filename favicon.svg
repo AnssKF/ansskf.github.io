@@ -1,14 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <circle cx="16" cy="16" r="16" fill="#0a0a0a"/>
-  <text
-    x="50%"
-    y="50%"
-    dominant-baseline="central"
-    text-anchor="middle"
-    font-family="system-ui,-apple-system,sans-serif"
-    font-size="13"
-    font-weight="700"
-    fill="#f0f0f0"
-    letter-spacing="-0.5"
-  >AK</text>
+  <style>
+    .paper { fill: #F3EEE4; }
+    .ink { fill: #141412; }
+    .pen { stroke: #141412; }
+    .dot { fill: #141412; opacity: .22; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #161513; }
+      .ink { fill: #ECE6D9; }
+      .pen { stroke: #ECE6D9; }
+      .dot { fill: #ECE6D9; }
+    }
+  </style>
+  <rect class="paper" width="32" height="32" rx="7"/>
+  <!-- the site's dot grid, reduced to the corners -->
+  <circle class="dot" cx="4.5" cy="4.5" r="1"/><circle class="dot" cx="27.5" cy="4.5" r="1"/>
+  <circle class="dot" cx="4.5" cy="27.5" r="1"/><circle class="dot" cx="27.5" cy="27.5" r="1"/>
+  <!-- AK in ink: round-capped pen strokes, heavier than the grid so it survives 16px -->
+  <g class="pen" fill="none" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.6 24 10.6 8.6 15.6 24"/>
+    <path d="M7.6 18.6h6"/>
+    <path d="M19.2 8.6V24"/>
+    <path d="M26.4 8.6 19.2 16.6"/>
+    <path d="M21.9 14.4 26.8 24"/>
+  </g>
+  <!-- ink blot where the pen paused -->
+  <circle class="ink" cx="19.2" cy="16.6" r="1.7"/>
 </svg>

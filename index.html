@@ -4,37 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!--
-    SEO FALLBACKS — these initial values are read by crawlers before JS executes.
-    resume.json is the single source of truth; _syncDocumentMeta() in app.js
-    overwrites all of these at runtime from resume.json data.
-    Keep them in sync with resume.json manually only when changing basics fields.
+    SEO FALLBACKS: crawlers read these before JS runs.
+    resume.json is the single source of truth; syncMeta() in js/app.js
+    overwrites them at runtime. Keep in sync manually only when basics change.
   -->
   <meta name="description" content="Anss Khaled Farouk — Senior Software Engineer specialising in Ruby on Rails, ReactJS, and full-stack web development. Portfolio and contact." />
   <meta name="robots" content="index, follow" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#F3EEE4" />
+  <!-- Theme before first paint (no flash): saved choice, else the OS setting. Kept in sync by js/app.js. -->
+  <script>
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (e) {}
+      var t = saved === 'dark' || saved === 'light' ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#161513' : '#F3EEE4');
+    })();
+  </script>
   <title>Anss Khaled — Senior Software Engineer</title>
 
-  <!-- Canonical -->
   <link rel="canonical" href="https://anssk.me" />
-
-  <!-- Sitemap discovery -->
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 
-  <!-- Open Graph -->
   <meta property="og:type"        content="profile" />
   <meta property="og:title"       content="Anss Khaled — Senior Software Engineer" />
   <meta property="og:description" content="Senior Software Engineer specialising in Ruby on Rails, ReactJS, and full-stack web development." />
   <meta property="og:url"         content="https://anssk.me" />
   <meta property="og:locale"      content="en_US" />
+  <meta property="og:image"       content="https://anssk.me/assets/og.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt"    content="Anss Khaled Farouk drawn in ink dots on warm paper, with a handwritten signature." />
   <meta property="profile:first_name" content="Anss" />
   <meta property="profile:last_name"  content="Khaled" />
 
-  <!-- Twitter / X Card -->
-  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="Anss Khaled — Senior Software Engineer" />
   <meta name="twitter:description" content="Senior Software Engineer specialising in Ruby on Rails, ReactJS, and full-stack web development." />
+  <meta name="twitter:image"       content="https://anssk.me/assets/og.png" />
 
-  <!-- Structured Data: Person -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -50,536 +60,223 @@
       "https://www.linkedin.com/in/ansskfarouk/",
       "https://github.com/AnssKF"
     ],
-    "knowsAbout": [
-      "Ruby on Rails",
-      "ReactJS",
-      "PostgreSQL",
-      "PHP Laravel",
-      "Full-Stack Web Development",
-      "Microservices Architecture",
-      "Docker",
-      "OpenSearch",
-      "Kafka",
-      "TypeScript"
-    ],
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Pixelogic Media"
-    },
-    "hasOccupation": {
-      "@type": "Occupation",
-      "name": "Senior Software Engineer",
-      "skills": "Ruby on Rails, ReactJS, PostgreSQL, PHP Laravel, Full-Stack Web Development, Microservices Architecture, Docker, OpenSearch, Kafka, TypeScript",
-      "occupationLocation": {
-        "@type": "Country",
-        "name": "Egypt"
-      }
-    }
+    "worksFor": { "@type": "Organization", "name": "Pixelogic Media" }
   }
   </script>
 
-  <!-- Google Fonts: Space Grotesk (display/body) + Space Mono (technical) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
-  />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400&display=swap" />
+  <link rel="stylesheet" href="css/site.css" />
 
-  <!-- css.gg icon library (pure CSS, ~700 icons) -->
-  <link rel="preconnect" href="https://unpkg.com" crossorigin />
-  <link rel="stylesheet" href="https://unpkg.com/css.gg@2.0.0/icons/all.css" />
 
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-
-  <!-- Theme: applied before render to prevent flash -->
-  <script>
-    (function () {
-      var t = localStorage.getItem('portfolio-theme') || 'system';
-      if (t === 'system') {
-        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
-      document.documentElement.setAttribute('data-theme', t);
-    })();
-  </script>
-
-  <!-- Site styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Order matters: main.js (module, deferred) registers Alpine components on `alpine:init`, so it must come before Alpine. -->
+  <script type="module" src="js/main.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
+<body x-data="site">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <noscript><p class="noscript">This site draws itself with JavaScript. The plain version lives in <a href="resume.json">resume.json</a>.</p></noscript>
 
-<body x-data="portfolio()">
+  <main class="page" x-ref="page" x-cloak>
+    <svg class="ink" x-ref="ink" aria-hidden="true">
+      <defs>
+        <mask id="ink-mask" maskUnits="userSpaceOnUse">
+          <path class="ink-mask" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+        </mask>
+      </defs>
+      <path class="ink-measure" fill="none" stroke="none"/>
+      <path class="ink-body" mask="url(#ink-mask)"/>
+      <g class="ink-blots"></g>
+      <circle class="ink-nib" r="3.2" cx="-10" cy="-10"/>
+    </svg>
 
-  <!-- ── Loader Overlay ──────────────────────────────────── -->
-  <div
-    class="loader-overlay"
-    :class="{ 'is-hidden': !loading }"
-    aria-hidden="true"
-    role="presentation"
-  >
-    <span class="loader-dot"></span>
-    <span class="loader-dot"></span>
-    <span class="loader-dot"></span>
-  </div>
-
-  <!-- ── Views Container ─────────────────────────────────── -->
-  <main class="content-area" aria-live="polite" aria-atomic="false">
-
-    <!-- ── View 1: Landing ─────────────────────────────── -->
-    <section
-      class="view"
-      :class="{
-        'is-active':  currentView  === 'landing',
-        'is-exiting': exitingView  === 'landing'
-      }"
-      aria-label="Home"
-    >
-      <div class="view-landing">
-
-        <!-- Top metadata bar -->
-        <div class="landing-header">
-          <span class="mono-label" x-text="'AK — ' + (resume?.basics?.label ?? '')"></span>
-          <span class="mono-label" x-text="resume?.basics?.location?.city ?? ''"></span>
-        </div>
-
-        <!-- Hairline separator -->
-        <span class="landing-sep" aria-hidden="true"></span>
-
-        <!-- Centred name block + spec annotation -->
-        <div class="landing-name-block">
-          <div class="landing-name" aria-label="Full name">
-            <span class="name--first" x-text="firstName"></span>
-            <span class="name--last"  x-text="lastName"></span>
-          </div>
-          <aside class="landing-spec" aria-hidden="true">
-            <span class="spec-item spec-item--rule"></span>
-            <span class="spec-item">Company</span>
-            <span class="spec-item spec-item--value" x-text="(resume?.work ?? [])[0]?.name ?? '—'"></span>
-            <span class="spec-item spec-item--rule"></span>
-            <span class="spec-item">Role</span>
-            <span class="spec-item spec-item--value" x-text="(resume?.work ?? [])[0]?.position ?? '—'"></span>
-            <span class="spec-item spec-item--rule"></span>
-            <span class="spec-item">Since</span>
-            <span class="spec-item spec-item--value" x-text="formatDate((resume?.work ?? [])[0]?.startDate) || '—'"></span>
-          </aside>
-        </div>
-
-        <!-- Footer: links -->
-        <footer class="landing-footer">
-          <hr class="landing-rule" aria-hidden="true" />
-          <div class="landing-links">
-            <!-- Email -->
-            <a
-              class="landing-link"
-              :href="'mailto:' + (resume?.basics?.email ?? '')"
-              x-show="resume?.basics?.email"
-              @mouseenter="showLinkPopup($event, 'mailto:' + (resume?.basics?.email ?? ''))"
-              @mouseleave="hideLinkPopup()"
-              @contextmenu.prevent="showLinkPopup($event, 'mailto:' + (resume?.basics?.email ?? ''))"
-            >
-              <span class="icon-box"><i class="gg-mail" aria-hidden="true"></i></span>
-              <span x-text="resume?.basics?.email"></span>
-            </a>
-
-            <!-- Social profiles from JSON -->
-            <template
-              x-for="profile in (resume?.basics?.profiles ?? [])"
-              :key="profile.network"
-            >
-              <a
-                class="landing-link"
-                :href="profile.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                @mouseenter="showLinkPopup($event, profile.url)"
-                @mouseleave="hideLinkPopup()"
-                @contextmenu.prevent="showLinkPopup($event, profile.url)"
-              >
-                <span class="icon-box"><i :class="'gg-' + profileIcon(profile.network)" aria-hidden="true"></i></span>
-                <span x-text="profile.network + ' / ' + profile.username"></span>
-              </a>
-            </template>
-
-            <!-- Resume / CV -->
-            <a
-              class="landing-link"
-              :href="resume?.basics?.resumeUrl ?? '#'"
-              target="_blank"
-              rel="noopener noreferrer"
-              x-show="resume?.basics?.resumeUrl"
-              @mouseenter="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
-              @mouseleave="hideLinkPopup()"
-              @contextmenu.prevent="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
-            >
-              <span class="icon-box"><i class="gg-file-document" aria-hidden="true"></i></span>
-              <span>Resume / CV</span>
-            </a>
-          </div>
-        </footer>
-
-      </div>
-    </section>
-
-    <!-- ── View 2: Education ────────────────────────────── -->
-    <section
-      class="view"
-      :class="{
-        'is-active':  currentView  === 'education',
-        'is-exiting': exitingView  === 'education'
-      }"
-      aria-label="Education"
-    >
-      <div class="view-inner">
-        <h2 class="section-label" :data-index="views.find(v => v.id === 'education')?.sectionIndex">Education</h2>
-
-        <div x-show="!(resume?.education?.length)" class="empty-state">
-          No education entries found.
-        </div>
-
-        <template
-          x-for="(edu, i) in (resume?.education ?? [])"
-          :key="i"
-        >
-          <article class="card">
-            <div class="card-row">
-              <h3 class="card-title">
-                <template x-if="edu.url">
-                  <a
-                    class="card-link"
-                    :href="edu.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    x-text="edu.institution"
-                  ></a>
-                </template>
-                <template x-if="!edu.url">
-                  <span x-text="edu.institution"></span>
-                </template>
-              </h3>
-              <span
-                class="card-meta"
-                x-show="edu.startDate || edu.endDate"
-              >
-                <span x-text="formatDate(edu.startDate)"></span>
-                <template x-if="edu.startDate || edu.endDate">
-                  <span> – </span>
-                </template>
-                <span x-text="edu.endDate ? formatDate(edu.endDate) : 'Present'"></span>
-              </span>
-            </div>
-            <p
-              class="card-subtitle"
-              x-text="[edu.studyType, edu.area].filter(Boolean).join(' · ')"
-            ></p>
-            <p
-              class="card-body"
-              x-show="edu.score"
-              x-text="'Score: ' + edu.score"
-            ></p>
-          </article>
+    <!-- LANDMARK: hero. Every [data-section] with an id is a hash route (#home). The name itself is drawn by the dot field. -->
+    <header class="hero" id="home" data-section>
+      <h1 class="sr-only" x-text="r.basics.name"></h1>
+      <p class="label mono" x-text="[r.basics.label, place].filter(Boolean).join(' · ')"></p>
+      <p class="summary" :class="{ go: ready }" :aria-label="r.basics.summary">
+        <template x-for="(w, i) in words" :key="i">
+          <span class="w" :style="`--i:${i}`" x-text="w" aria-hidden="true"></span>
         </template>
-      </div>
-    </section>
+      </p>
+      <p class="hint mono" :class="{ go: ready }" :style="`animation-delay:${hintDelay}ms`">scroll, I'll draw you the rest</p>
+      <span class="ink-start" data-ink="start"></span>
+    </header>
 
-    <!-- ── View 3: Skills ───────────────────────────────── -->
-    <section
-      class="view"
-      :class="{
-        'is-active':  currentView  === 'skills',
-        'is-exiting': exitingView  === 'skills'
-      }"
-      aria-label="Skills"
-    >
-      <div class="view-inner">
-        <h2 class="section-label" :data-index="views.find(v => v.id === 'skills')?.sectionIndex">Skills</h2>
+    <!--
+      SECTIONS: one loop renders every entry of js/config/sections.js.
+      Common chrome (hash route, heading, copy-link icon, ink-line node) is here once; the body is chosen by `s.view`.
+      To add a view: copy one of the <template x-if> blocks below and change the condition.
+    -->
+    <template x-for="s in sections" :key="s.id">
+      <section :id="s.id" class="sec" data-section>
+        <header class="sec-head" data-ink>
+          <p class="key mono" x-text="s.key"></p>
+          <h2 x-anchor="s.id"><span x-text="s.title"></span></h2>
+        </header>
 
-        <div class="skills-grid">
-          <template
-            x-for="(group, i) in (resume?.skills ?? [])"
-            :key="i"
-          >
-            <div class="skill-group" :aria-label="group.name">
-              <h3 class="skill-group-label" x-text="group.name"></h3>
-              <div class="tags" role="list">
-                <template x-for="kw in group.keywords" :key="kw">
-                  <span class="tag" role="listitem" x-text="kw"></span>
+        <!-- view: work (work[]) -->
+        <template x-if="s.view === 'work'">
+          <div>
+            <template x-for="(job, i) in r.work" :key="i">
+              <article class="entry reveal" data-ink>
+                <p class="meta mono">
+                  <span x-text="range(job) || 'on and off'"></span>
+                  <span x-show="duration(job)" x-text="duration(job)"></span>
+                </p>
+                <h3 x-text="job.position"></h3>
+                <p class="org">
+                  <template x-if="job.url"><a :href="job.url" target="_blank" rel="noopener" x-text="job.name"></a></template>
+                  <template x-if="!job.url"><span x-text="job.name"></span></template>
+                </p>
+                <p class="sum" x-show="job.summary" x-text="job.summary"></p>
+                <ul class="hl">
+                  <template x-for="(h, k) in shown(job)" :key="k"><li x-text="h"></li></template>
+                </ul>
+                <template x-if="hidden(job) > 0">
+                  <div>
+                    <div class="more" :class="{ open: open['work-' + i] }" :id="`more-${i}`">
+                      <div>
+                        <ul class="hl">
+                          <template x-for="(h, k) in rest(job)" :key="k"><li :style="`--k:${k}`" x-text="h"></li></template>
+                        </ul>
+                      </div>
+                    </div>
+                    <button class="more-btn mono" type="button" @click="open['work-' + i] = !open['work-' + i]"
+                            :aria-expanded="!!open['work-' + i]" :aria-controls="`more-${i}`"
+                            x-text="open['work-' + i] ? 'fold it back up' : `+${hidden(job)} more I'm proud of`"></button>
+                  </div>
                 </template>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── View 4: Experience ───────────────────────────── -->
-    <section
-      class="view"
-      :class="{
-        'is-active':  currentView  === 'experience',
-        'is-exiting': exitingView  === 'experience'
-      }"
-      aria-label="Work Experience"
-    >
-      <div class="view-inner">
-        <h2 class="section-label" :data-index="views.find(v => v.id === 'experience')?.sectionIndex">Experience</h2>
-
-        <div x-show="!(resume?.work?.length)" class="empty-state">
-          Work history coming soon.
-        </div>
-
-        <template
-          x-for="(job, i) in (resume?.work ?? [])"
-          :key="i"
-        >
-          <article class="card">
-            <div class="card-row">
-              <h3 class="card-title">
-                <template x-if="job.url">
-                  <a
-                    class="card-link"
-                    :href="job.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    x-text="job.name"
-                  ></a>
-                </template>
-                <template x-if="!job.url">
-                  <span x-text="job.name"></span>
-                </template>
-              </h3>
-              <span class="card-meta" x-show="job.startDate">
-                <span x-text="formatDate(job.startDate)"></span>
-                <span> – </span>
-                <span x-text="job.endDate ? formatDate(job.endDate) : 'Present'"></span>
-              </span>
-            </div>
-            <p class="card-subtitle" x-text="job.position"></p>
-            <p
-              class="card-body"
-              x-show="job.summary"
-              x-text="job.summary"
-            ></p>
-            <ul
-              class="highlights"
-              x-show="job.highlights && job.highlights.length"
-              aria-label="Highlights"
-            >
-              <template x-for="h in (job.highlights ?? [])" :key="h">
-                <li x-text="h"></li>
-              </template>
-            </ul>
-          </article>
-        </template>
-      </div>
-    </section>
-
-    <!-- ── View 5: Contact ──────────────────────────────── -->
-    <section
-      class="view"
-      :class="{
-        'is-active':  currentView  === 'contact',
-        'is-exiting': exitingView  === 'contact'
-      }"
-      aria-label="Contact"
-    >
-      <div class="view-landing">
-
-        <div class="landing-header">
-          <span class="mono-label" x-text="(views.find(v => v.id === 'contact')?.sectionIndex ?? '05') + ' — Contact'"></span>
-        </div>
-
-        <span class="landing-sep" aria-hidden="true"></span>
-
-        <div class="landing-name-block">
-          <h2 class="contact-heading">Get in<br/>touch.</h2>
-        </div>
-
-        <footer class="landing-footer">
-          <hr class="landing-rule" aria-hidden="true" />
-          <div class="contact-links">
-            <!-- Email -->
-            <a
-              class="contact-link"
-              :href="'mailto:' + (resume?.basics?.email ?? '')"
-              x-show="resume?.basics?.email"
-              @mouseenter="showLinkPopup($event, 'mailto:' + (resume?.basics?.email ?? ''))"
-              @mouseleave="hideLinkPopup()"
-              @contextmenu.prevent="showLinkPopup($event, 'mailto:' + (resume?.basics?.email ?? ''))"
-            >
-              <span class="icon-box"><i class="gg-mail" aria-hidden="true"></i></span>
-              <span x-text="resume?.basics?.email"></span>
-            </a>
-
-            <!-- Social profiles -->
-            <template
-              x-for="profile in (resume?.basics?.profiles ?? [])"
-              :key="profile.network"
-            >
-              <a
-                class="contact-link"
-                :href="profile.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                @mouseenter="showLinkPopup($event, profile.url)"
-                @mouseleave="hideLinkPopup()"
-                @contextmenu.prevent="showLinkPopup($event, profile.url)"
-              >
-                <span class="icon-box"><i :class="'gg-' + profileIcon(profile.network)" aria-hidden="true"></i></span>
-                <span x-text="profile.network + ' / ' + profile.username"></span>
-              </a>
+              </article>
             </template>
-
-            <!-- Resume / CV -->
-            <a
-              class="contact-link"
-              :href="resume?.basics?.resumeUrl ?? '#'"
-              target="_blank"
-              rel="noopener noreferrer"
-              x-show="resume?.basics?.resumeUrl"
-              @mouseenter="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
-              @mouseleave="hideLinkPopup()"
-              @contextmenu.prevent="showLinkPopup($event, resume?.basics?.resumeUrl ?? '')"
-            >
-              <span class="icon-box"><i class="gg-file-document" aria-hidden="true"></i></span>
-              <span>Resume / CV</span>
-            </a>
           </div>
-        </footer>
+        </template>
 
-      </div>
-    </section>
-
-    <!-- ── View 6: Settings ─────────────────────────────── -->
-    <section
-      class="view settings-view"
-      :class="{
-        'is-active':  currentView  === 'settings',
-        'is-exiting': exitingView  === 'settings'
-      }"
-      aria-label="Settings"
-    >
-      <div class="view-inner">
-        <h2 class="section-label" :data-index="views.find(v => v.id === 'settings')?.sectionIndex">Settings</h2>
-
-        <!-- Theme Section -->
-        <div class="settings-section">
-          <h3 class="settings-section-label">Theme</h3>
-          <div class="theme-options">
-
-            <button
-              class="theme-option"
-              :class="{ 'is-active': currentTheme === 'light' }"
-              @click="setTheme('light')"
-              type="button"
-              aria-label="Light theme"
-            >
-              <span class="theme-option-icon">
-                <i class="gg-sun" aria-hidden="true"></i>
-              </span>
-              <span class="theme-option-label">Light</span>
-            </button>
-
-            <button
-              class="theme-option"
-              :class="{ 'is-active': currentTheme === 'dark' }"
-              @click="setTheme('dark')"
-              type="button"
-              aria-label="Dark theme"
-            >
-              <span class="theme-option-icon">
-                <i class="gg-moon" aria-hidden="true"></i>
-              </span>
-              <span class="theme-option-label">Dark</span>
-            </button>
-
-            <button
-              class="theme-option"
-              :class="{ 'is-active': currentTheme === 'system' }"
-              @click="setTheme('system')"
-              type="button"
-              aria-label="System theme"
-            >
-              <span class="theme-option-icon">
-                <i class="gg-laptop" aria-hidden="true"></i>
-              </span>
-              <span class="theme-option-label">System</span>
-            </button>
-
+        <!-- view: projects (projects[]) -->
+        <template x-if="s.view === 'projects'">
+          <div class="cards" :class="{ solo: r.projects.length === 1 }">
+            <template x-for="(p, i) in r.projects" :key="i">
+              <article class="card reveal" data-ink>
+                <p class="meta mono" x-show="p.type || p.startDate" x-text="[p.type, range(p)].filter(Boolean).join(' · ')"></p>
+                <h3>
+                  <template x-if="p.url"><a :href="p.url" target="_blank" rel="noopener" x-text="p.name"></a></template>
+                  <template x-if="!p.url"><span x-text="p.name"></span></template>
+                </h3>
+                <p x-text="p.description"></p>
+                <ul class="hl" x-show="list(p.highlights).length">
+                  <template x-for="(h, k) in list(p.highlights)" :key="k"><li x-text="h"></li></template>
+                </ul>
+                <p class="tags mono"><template x-for="k in list(p.keywords)" :key="k"><span x-text="k"></span></template></p>
+              </article>
+            </template>
           </div>
-        </div>
+        </template>
 
-      </div>
-    </section>
+        <!-- view: skills (skills[]) -->
+        <template x-if="s.view === 'skills'">
+          <div class="clusters">
+            <template x-for="(sk, si) in r.skills" :key="si">
+              <figure class="cluster">
+                <svg viewBox="-64 -64 128 128" aria-hidden="true" x-html="cluster(sk, si)"></svg>
+                <figcaption>
+                  <span class="sk-name" x-text="sk.name"></span>
+                  <span class="mono lvl" x-text="sk.level"></span>
+                  <span class="mono kw" x-text="list(sk.keywords).join(' · ')"></span>
+                </figcaption>
+              </figure>
+            </template>
+          </div>
+        </template>
 
+        <!-- view: education (education[] + certificates[]) -->
+        <template x-if="s.view === 'education'">
+          <div>
+            <template x-for="(e, i) in r.education" :key="i">
+              <article class="entry reveal" data-ink>
+                <p class="meta mono">
+                  <span x-text="range(e)"></span>
+                  <span x-show="e.score" x-text="`grade: ${String(e.score).toLowerCase()}`"></span>
+                </p>
+                <h3 x-text="degree(e)"></h3>
+                <p class="org">
+                  <template x-if="e.url"><a :href="e.url" target="_blank" rel="noopener" x-text="e.institution"></a></template>
+                  <template x-if="!e.url"><span x-text="e.institution"></span></template>
+                </p>
+                <ul class="hl" x-show="list(e.courses).length">
+                  <template x-for="(c, k) in list(e.courses)" :key="k"><li x-text="c"></li></template>
+                </ul>
+              </article>
+            </template>
+            <template x-for="(c, i) in r.certificates" :key="`c${i}`">
+              <article class="entry reveal" data-ink>
+                <p class="meta mono">
+                  <span>certificates[]</span>
+                  <span x-show="c.date" x-text="fmt(c.date)"></span>
+                  <span x-show="c.issuer" x-text="c.issuer"></span>
+                </p>
+                <h3>
+                  <template x-if="c.url"><a :href="c.url" target="_blank" rel="noopener" x-text="c.name"></a></template>
+                  <template x-if="!c.url"><span x-text="c.name"></span></template>
+                </h3>
+                <p class="sum" x-show="c.summary" x-text="c.summary"></p>
+              </article>
+            </template>
+          </div>
+        </template>
+      </section>
+    </template>
+
+    <!-- LANDMARK: sign-off (hash route #contact) -->
+    <footer id="contact" class="sec foot" data-section>
+      <header class="sec-head" data-ink>
+        <p class="key mono">basics.email</p>
+        <h2 x-anchor="'contact'"><span>That's the story so far</span></h2>
+      </header>
+      <p class="sum">Still writing it. Got a chapter in mind?</p>
+      <p class="contact mono">
+        <a x-show="r.basics.email" :href="`mailto:${r.basics.email}`" x-text="r.basics.email"></a>
+        <template x-for="p in r.basics.profiles" :key="p.url"><a :href="p.url" target="_blank" rel="noopener" x-text="p.network"></a></template>
+        <a x-show="r.basics.resumeUrl" :href="r.basics.resumeUrl" target="_blank" rel="noopener">Resume / CV</a>
+      </p>
+      <div class="sig" data-ink="signature" x-html="signatureSvg"></div>
+      <p class="credit mono">built from <a href="resume.json">resume.json</a> · <span x-text="year"></span></p>
+    </footer>
   </main>
 
-  <!-- ── Settings Toggle ─────────────────────────────────── -->
-  <button
-    class="settings-btn"
-    :class="{ 'is-open': currentView === 'settings' }"
-    @click="toggleSettings()"
-    :aria-label="currentView === 'settings' ? 'Close settings' : 'Open settings'"
-    :aria-expanded="currentView === 'settings'"
-    x-show="!loading"
-    type="button"
-  >
-    <i :class="currentView === 'settings' ? 'gg-close' : 'gg-options'" aria-hidden="true"></i>
+  <button class="theme-btn" type="button" x-cloak @click="$store.theme.toggle($event)"
+          :aria-label="$store.theme.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+          :title="$store.theme.theme === 'dark' ? 'Lights on' : 'Lights off'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+      <mask id="theme-bite"><rect x="-4" y="-4" width="32" height="32" fill="#fff"/><circle class="bite" cx="16.5" cy="7.5" r="6.4" fill="#000"/></mask>
+      <circle class="orb" cx="12" cy="12" r="7.6" fill="currentColor" stroke="none" mask="url(#theme-bite)"/>
+      <g class="rays"><path d="M12 2.6v1.8M12 19.6v1.8M2.6 12h1.8M19.6 12h1.8M5.4 5.4l1.3 1.3M17.3 17.3l1.3 1.3M5.4 18.6l1.3-1.3M17.3 6.7l1.3-1.3"/></g>
+    </svg>
   </button>
 
-  <!-- ── Floating Dock Navigation ────────────────────────── -->
-  <nav class="dock" aria-label="Site navigation">
-    <template x-for="item in navItems" :key="item.id">
-      <button
-        class="dock-btn"
-        :class="{ 'is-active': currentView === item.id }"
-        @click="switchView(item.id)"
-        :aria-label="item.name"
-        :aria-current="currentView === item.id ? 'page' : false"
-        type="button"
-      >
-        <span x-text="item.name"></span>
-      </button>
-    </template>
-  </nav>
+  <!-- Ctrl/⌘+K command palette (commands: js/ui/commands.js) -->
+  <div x-data="palette" @keydown.window="onKey($event)" x-effect="document.documentElement.classList.toggle('palette-open', isOpen)">
+    <button class="chip mono" type="button" x-cloak x-show="ready && !isOpen" x-transition.opacity @click="show()" x-text="chip" aria-label="Open command palette"></button>
 
-  <!-- ── Link Action Popup ──────────────────────────────────── -->
-  <div
-    class="link-popup"
-    :class="{ 'is-visible': linkPopup.show }"
-    :style="`left: ${linkPopup.x}px; top: ${linkPopup.y}px`"
-    @mouseenter="keepLinkPopup()"
-    @mouseleave="hideLinkPopup()"
-    @click.outside="hideLinkPopup(true)"
-    role="dialog"
-    aria-label="Link actions"
-  >
-    <button
-      class="link-popup-btn"
-      @click.stop="copyLink()"
-      type="button"
-    >
-      <i class="gg-copy" aria-hidden="true"></i>
-      <span x-text="linkPopup.copied ? 'Copied!' : 'Copy'"></span>
-    </button>
-    <span class="link-popup-sep" aria-hidden="true"></span>
-    <a
-      class="link-popup-btn"
-      :href="linkPopup.href"
-      :target="linkPopup.href.startsWith('mailto:') ? '_self' : '_blank'"
-      rel="noopener noreferrer"
-      @click.stop="hideLinkPopup(true)"
-    >
-      <i class="gg-arrow-top-right" aria-hidden="true"></i>
-      <span>Open</span>
-    </a>
+    <div class="pal-wrap" x-cloak x-show="isOpen" x-transition.opacity @click.self="hide()">
+      <div class="pal" role="dialog" aria-modal="true" aria-label="Command palette">
+        <input x-ref="q" x-model="query" @input="index = 0" class="mono" type="text" autocomplete="off" spellcheck="false"
+               placeholder="Where to? Try “email” or “skills”" aria-label="Search commands"
+               @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)" @keydown.enter.prevent="run(results[index])">
+        <ul x-ref="list" role="listbox">
+          <template x-for="(it, k) in results" :key="it.id">
+            <li role="option" :aria-selected="k === index" :class="{ on: k === index }" @mouseenter="index = k" @click="run(it)">
+              <span x-text="it.label"></span><span class="mono hintk" x-text="it.hint"></span>
+            </li>
+          </template>
+          <li class="empty" x-show="!results.length">Nothing matches. The pen ran dry.</li>
+        </ul>
+      </div>
+    </div>
   </div>
 
-  <!-- Script loading order: app.js first (defines portfolio()), then Alpine -->
-  <script src="app.js" defer></script>
-  <script
-    defer
-    src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"
-  ></script>
-
+  <div class="toast-wrap" aria-live="polite">
+    <div class="toast mono" x-cloak x-show="$store.toast.message" x-transition.opacity x-text="$store.toast.message"></div>
+  </div>
 </body>
 </html>

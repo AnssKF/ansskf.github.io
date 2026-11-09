@@ -1,0 +1,81 @@
+<!doctype html>
+<!--
+  Generator for assets/og.png (the social preview card, 1200x630). Reads ../resume.json, so re-render after changing name/title:
+
+    1. serve the repo root (e.g. `npx serve .` or `python -m http.server 8000`)
+    2. chrome --headless=new --hide-scrollbars --window-size=1200,630 --virtual-time-budget=8000 \
+         --screenshot=assets/og.png http://localhost:8000/tools/og-image.html
+
+  Same look as the site: warm paper, dot grid, the name drawn in ink dots, a pen line ending in the signature.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>og-image</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,700&display=swap">
+  <style>
+    html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #F3EEE4; }
+    canvas { display: block; }
+    .mono { position: absolute; font: 500 24px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .02em; color: #736D62; }
+    #label { left: 96px; bottom: 74px; }
+    #domain { right: 96px; top: 62px; color: #141412; }
+    #sig { position: absolute; right: 92px; bottom: 56px; width: 300px; height: auto; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="1200" height="630"></canvas>
+  <div class="mono" id="label"></div>
+  <div class="mono" id="domain"></div>
+  <img id="sig" src="../assets/signature.svg" alt="">
+
+<script type="module">
+  const PAPER = '#F3EEE4', INK = '#141412', FAINT = '#CFC7B5';
+  const W = 1200, H = 630;
+  const resume = await (await fetch('../resume.json')).json();
+  const { name, label, location = {}, url = '' } = resume.basics;
+  const title = resume.work?.[0]?.position || label;
+  document.getElementById('label').textContent = [title, location.city].filter(Boolean).join(' · ');
+  document.getElementById('domain').textContent = url.replace(/^https?:\/\//, '');
+  await document.fonts.load('700 100px Newsreader');
+  await document.fonts.load('500 24px "JetBrains Mono"');
+
+  const ctx = document.getElementById('c').getContext('2d', { willReadFrequently: true });
+  ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
+
+  // background dot grid (14px, like the site)
+  ctx.fillStyle = FAINT;
+  for (let y = 7; y < H; y += 14) for (let x = 7; x < W; x += 14) { ctx.beginPath(); ctx.arc(x, y, 1.15, 0, Math.PI * 2); ctx.fill(); }
+
+  // rasterise the name, then redraw it as ink dots on a finer lattice
+  const words = name.split(' ');
+  const lines = words.length > 2 ? [words.slice(0, -1).join(' '), words.at(-1)] : [name];
+  const size = 158, lineHeight = size * 0.95, cx = 96, cy = 205;
+  const mask = document.createElement('canvas'); mask.width = W; mask.height = H;
+  const m = mask.getContext('2d', { willReadFrequently: true });
+  m.font = `700 ${size}px Newsreader, Georgia, serif`; m.fillStyle = '#000'; m.textBaseline = 'middle';
+  lines.forEach((l, i) => m.fillText(l, cx, cy + i * lineHeight));
+  const px = m.getImageData(0, 0, W, H).data;
+  const step = 8;
+  ctx.fillStyle = INK;
+  for (let y = 0; y < H; y += step) for (let x = 0; x < W; x += step) {
+    let a = 0;
+    for (const [dx, dy] of [[0, 0], [3, 0], [-3, 0], [0, 3], [0, -3]]) a += px[((y + dy) * W + (x + dx)) * 4 + 3] / 255;
+    a /= 5;
+    if (a > 0.1) { ctx.beginPath(); ctx.arc(x, y, 0.5 + 2.9 * Math.min(1, a * 1.3), 0, Math.PI * 2); ctx.fill(); }
+  }
+
+  // pen line: a hand-drawn stroke along the bottom edge that ends where the signature begins
+  const line = [[96, 560], [300, 580], [520, 556], [760, 586], [905, 560]];
+  ctx.strokeStyle = INK; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for (let i = 0; i < line.length - 1; i++) {
+    const [x0, y0] = line[i], [x1, y1] = line[i + 1];
+    ctx.lineWidth = 2 + 1.4 * Math.sin(i * 1.7 + 0.6) ** 2; ctx.beginPath(); ctx.moveTo(x0, y0);
+    ctx.quadraticCurveTo((x0 + x1) / 2, (y0 + y1) / 2 + (i % 2 ? -14 : 14), x1, y1); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.arc(96, 560, 6.5, 0, Math.PI * 2); ctx.fill();   // ink blot where the pen touched down
+  await document.getElementById('sig').decode();
+</script>
+</body>
+</html>

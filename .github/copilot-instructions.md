@@ -1,17 +1,24 @@
 # GitHub Copilot / AI Agent Instructions
 
 ## Project Overview
-Personal portfolio static site for **Anss Khaled** — published at `ansskf.github.io` via GitHub Pages.  
+Personal portfolio static site for **Anss Khaled** — published at `anssk.me` (repo `ansskf.github.io`) via GitHub Pages.  
 **No build step. No package manager. No framework CLI.** Deploy = push to `main`.
 
 **File map:**
 | File | Role |
 |---|---|
-| `index.html` | Single page; all 5 views declared here |
-| `app.js` | Alpine.js component (`portfolio()`) — all state and logic |
-| `styles.css` | All styles; single file, section-commented |
-| `resume.json` | Only file to edit for content changes (jsonresume.org schema v1) |
-| `CNAME` | `ansskf.github.io` — **never rename or delete** |
+| `index.html` | Single long-scroll page; SEO fallbacks in `<head>`; all sections declared here |
+| `js/main.js` | Entry point (ES module): registers Alpine stores, the `x-anchor` directive and the `site` / `palette` components |
+| `js/config/sections.js` | **Section registry** — the one place that lists sections (id, view, heading, visibility, palette command) |
+| `js/services.js` | Composition root: one instance of each service (ink engine, router, theme, SEO sync, viewport observer) |
+| `js/services/`, `js/ink/`, `js/lib/`, `js/model/` | Plain classes / pure helpers, no Alpine: `HashRouter`, `ThemeManager`, `MetaSync`, `ViewportObserver`; `DotField`, `InkLine`, `HeroSubject`, `Signature`; formatters + math; `Resume` |
+| `js/ui/` | Thin Alpine glue: `stores.js`, `sitePage.js` (page component + boot), `palettePanel.js` + `commands.js`, `anchorDirective.js` |
+| `css/site.css` | All styles; single file |
+| `resume.json` | Only file to edit for content changes (jsonresume.org schema v1, plus `basics.resumeUrl`) |
+| `assets/signature.svg` | Owner's hand-drawn signature, one `<path>` per stroke, drawn in stroke order |
+| `assets/og.png` | 1200×630 social preview (`og:image`, `twitter:image`). Regenerate with `tools/og-image.html` (render steps in its header comment) after changing the name or job title |
+| `favicon.svg`, `sitemap.xml`, `.nojekyll` | Static assets |
+| `CNAME` | `anssk.me` — **never rename or delete** |
 | `README.md` | GitHub profile card — keep contact info unchanged without owner approval |
 
 ---
@@ -19,72 +26,70 @@ Personal portfolio static site for **Anss Khaled** — published at `ansskf.gith
 ## Architecture & Data Flow
 
 ```
-resume.json  ──fetch──▶  app.js (Alpine.js portfolio())  ──binds──▶  index.html views
+resume.json ──▶ model/Resume ──▶ Alpine store 'resume' ──▶ index.html templates
+config/sections.js ──▶ section loop in index.html · hash routes · palette "jump" commands
+js/services.js ──▶ ink engine, HashRouter, ThemeManager, MetaSync   (plain classes)
+js/ui/*        ──▶ Alpine glue calling the services
 ```
 
-- On `init()`, `portfolio()` fetches `./resume.json`, populates `this.resume`, then updates `<title>` and `<meta name="description">` from `basics.name` / `basics.summary`.
-- All template rendering uses Alpine `x-for` / `x-text` / `x-show` binding to `resume.*`.
+Layering rule: **services and ink classes never import Alpine**; `js/ui/` is the only layer that does. State templates must react to lives in Alpine stores (`resume`, `theme`, `toast`); logic lives in services. Use `#private` members in service classes, but not inside objects handed to Alpine (it wraps them in proxies).
+
+- Boot (`ui/sitePage.js` `init()`): theme → dot field → load `resume.json` → `MetaSync` → wait for sections to render → hero subject → `InkLine.mount` → signature/reveal observers → `HashRouter.start()` (last, because deep links need real layout).
 - **Content updates belong exclusively in `resume.json`** — never hardcode content in HTML.
-- The site has a 280 ms intentional loader delay (`_sleep(280)`) to prevent flash; do not remove it.
+- Hero: `basics.name` is drawn by the dot field (no photo) or `basics.image` as a halftone portrait (if set). The visible `<h1>` is screen-reader only.
+- Scripts: `js/main.js` is a `type="module"` script placed **before** the Alpine `<script defer>` so its `alpine:init` listener exists in time. Modules need http(s), not `file://` (as does `fetch('resume.json')`).
 
-### View System
-5 views (`landing`, `education`, `skills`, `experience`, `contact`) are stacked `position: absolute` panels inside `.content-area`.  
-State lives in `currentView` and `exitingView`. Transitions are CSS-only (`opacity` + `translateY`):
-- Entering view: `is-active` → slides up from `translateY(24px)` → `0`
-- Exiting view: `is-exiting` → slides to `translateY(-16px)` → cleared after 600 ms via `setTimeout`
+### Sections & hash routing
+- `config/sections.js` lists the sections. `index.html` renders them with one `x-for` loop: shared chrome (route, heading, copy-link icon, ink-line node) once, body chosen by `s.view` via `<template x-if>`.
+- Any element with `data-section` and an `id` is a route. `HashRouter`: opening `/#id` scrolls there; scrolling rewrites the hash with `history.replaceState` (empty hash at the top); changing the hash / back-forward scrolls; `copyLink(id)` copies the full URL.
+- `x-anchor="id"` on a heading adds the little link icon that copies that section's URL.
+- Old deep links stay valid: `#home`, `#experience`, `#skills`, `#education`, `#contact` (plus `#projects`).
 
-**Script load order is critical** — `app.js` must load before Alpine (`defer` preserves document order):
-```html
-<script src="app.js" defer></script>
-<script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
-```
 
-### Navigation Dock
-`navItems` array in `app.js` drives the floating bottom nav. To add a view: add entry to `navItems`, add a `<section class="view" …>` block in `index.html`, and add any needed styles in `styles.css`.
+### Ink engine (js/ink/)
+- `DotField` — fixed full-viewport `<canvas>` dot grid. Dots repel from the pointer, darken near the pen tip, and the hero subject (`HeroSubject`) dissolves on scroll. Redraws only while something is moving. Colours come from CSS vars via `ink/colors.js`.
+- `InkLine` — one SVG pen stroke through every `[data-ink]` element (DOM order; `data-ink="start"` is the hero origin). Curve/width maths is in `ink/geometry.js`. Variable-width outline revealed by a dash-offset mask that follows scroll; blots at each node. Rebuilds on layout change (ResizeObserver).
+- `Signature` — draws each stroke of `assets/signature.svg` in order. The ink line's last node is the signature's first stroke (`data-ink="signature"`); `InkLine.onArrive` starts the writing when the pen gets there (viewport trigger is only a fallback if the line has no path).
+- `prefers-reduced-motion` (`lib/motion.js`): everything renders fully drawn, no motion.
+
+### Command palette
+`ui/commands.js` is a list of providers `(ctx) => Command[]` (jump, contact, theme, misc). Section "jump" commands come from the registry automatically. Opens with Ctrl/⌘+K or `/`; the floating chip opens it on touch devices. Add commands to a provider there.
 
 ---
 
-## Design System — Modern Typographic Minimalism (Swiss Style)
+### Print
+Ctrl/⌘+P prints a clean one-column CV: always light, no dots/ink line/controls, the name as real text, all work highlights expanded, external link URLs shown, signature fully drawn. It lives in the `@media print` block at the end of `css/site.css`; any new decorative layer must be hidden there.
 
-The visual identity is **Swiss / International Typographic Style** with a utilitarian dark aesthetic. Every UI decision should reinforce this; do not introduce decorative elements, rounded corners, gradients, or color accents.
+---
 
-### Palette (strict monochrome dark)
-All colors are CSS custom properties — **never use raw hex values** outside `:root`:
+## Design System — Ink on Paper
+
+Minimal, flat, warm paper with black ink only. Emphasis comes from ink weight (line thickness, blots, dot density), never from colour. No gradients, shadows or extra accent colours.
+
+### Palette (CSS custom properties in `:root`, never raw hex elsewhere)
 ```css
---c-bg:       #0a0a0a   /* page background */
---c-surface:  #0e0e0e
---c-card:     #111111
---c-border:   #ffffff   /* primary hairline — white on dark */
---c-border-2: #2a2a2a   /* secondary / subtle dividers */
---c-text:     #f0f0f0   /* body text */
---c-muted:    #3a3a3a   /* de-emphasised */
---c-dim:      #606060   /* metadata, labels */
---c-faint:    #141414   /* hover backgrounds */
---c-accent:   #ffffff
+--paper: #F3EEE4   /* page */
+--ink:   #141412   /* text, line, dots */
+--ink-2: #3E3B35   /* secondary text */
+--muted: #736D62   /* metadata */
+--faint: #CFC7B5   /* background dots */
+--hair:  rgba(20,20,18,.16) /* hairlines */
 ```
+Dark theme (`:root[data-theme="dark"]`) inverts it: `--paper #161513`, `--ink #ECE6D9`, `--ink-2 #C9C2B4`, `--muted #959082`. Every colour must exist in both blocks (plus the `prefers-color-scheme` no-JS fallback). The canvas reads `--dot`, `--dot-mid` and `--ink` at runtime, so never hardcode colours in `js/ink/`.
+
+### Theme
+- Default follows the OS (`prefers-color-scheme`) and keeps following it live.
+- The round icon (top-right) toggles light/dark; the choice is saved in `localStorage.theme`. Toggling back to the OS value clears it (back to "follow system"). The palette has "Switch to … theme" and "Follow system theme".
+- An inline script in `<head>` sets `data-theme` before first paint — keep it first in `<head>` scripts to avoid a flash.
+- The switch spreads from the icon with a View Transition (instant when unsupported or with reduced motion).
 
 ### Typography
-- `--f-display: 'Space Grotesk'` — headings, body, UI labels
-- `--f-mono: 'Space Mono'` — all metadata, dates, tags, section labels, dock buttons, spec annotations
+- `--serif: 'Newsreader'` — headings and body (700 is used for the dotted hero name).
+- `--mono: 'JetBrains Mono'` — dates, keys like `work[]`, tags, palette hints.
+- Section keys are the resume.json path in mono (`work[]`, `skills[]`), headings are playful serif lines.
 
-**Rules:**
-- Section labels: `font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase`
-- Dates / metadata: mono, `letter-spacing: 0.06em`, `color: var(--c-dim)`
-- Hero name: `clamp(72px, 13vw, 160px)`, `letter-spacing: -0.04em`, `font-weight: 700`
-- Last name uses **outlined / ghost** treatment: `color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,0.18)`
-- Tags: `border-radius: 0` (square), `border: 1px solid var(--c-border-2)`, invert on hover
-
-### Layout Conventions
-- No border-radius on structural elements — square corners only.
-- Hairline rules (`1px solid var(--c-border)`) are the primary structural dividers.
-- Corner registration marks on `.view-landing` (CSS `::before` / `::after`) — a Swiss poster motif; preserve these.
-- Cards: left `2px transparent` border that reveals `var(--c-border)` on hover (not background color).
-- Highlight list bullets use `//` pseudo-content, not `•` or standard list markers.
-- Link hover: text fades + `→` arrow nudges `translateX(4px)` — no underlines.
-
-### Icons
-`css.gg` (pure CSS, CDN) — class pattern `gg-<name>`. New icons must come from this library.  
-Social network → icon mapping lives in `profileIcon()` in `app.js`.
+### Voice
+Microcopy is playful and short ("scroll, I'll draw you the rest", "+3 more I'm proud of", "Nothing matches. The pen ran dry.").
 
 ---
 
@@ -117,7 +122,7 @@ If context is insufficient for the requested mode, respond exactly: **"NOT ENOUG
 
 - **`CNAME`** — never rename or delete; breaks the live domain.
 - **`README.md` contact fields** — email, LinkedIn URL, resume Drive link — require owner confirmation to change.
-- **Resume Drive link** in `index.html` (`https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view`) — treat as protected.
+- **Resume Drive link** (`basics.resumeUrl` in `resume.json`, and `sitemap.xml`: `https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view`) — treat as protected.
 
 ---
 
@@ -129,7 +134,7 @@ If context is insufficient for the requested mode, respond exactly: **"NOT ENOUG
   ```
 - **Deploy** — push to `main`; GitHub Pages serves the root automatically.
 - **Content changes** — edit `resume.json` only; fields follow [jsonresume.org schema v1](https://jsonresume.org/schema/).
-- **Adding a new view** — three touch points: `navItems` in `app.js` → `<section class="view">` in `index.html` → styles in `styles.css`.
+- **Adding a section** — add an entry to `js/config/sections.js` (id, view, key, title, `has`, palette). Reuse an existing `view` or add a `<template x-if="s.view === '…'">` block in `index.html` (put `data-ink` on its entries). Add styles in `css/site.css`. Route, copy-link icon, ink-line node and palette command come for free.
 
 ---
 
