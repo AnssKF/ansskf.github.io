@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schema/sitemap/0.9">
+  {#pages}
+  <url>
+    <loc>{loc}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>{priority}</priority>
+  </url>
+  {/pages}
+</urlset>

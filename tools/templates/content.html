@@ -1,0 +1,69 @@
+  <div id="static-resume" class="static-resume">
+    <h1>{name}</h1>
+    <p>{headline}</p>
+    <p>{summary}</p>
+    <ul>
+      <li><a href="mailto:{email}">{email}</a></li>
+      {#profiles}
+      <li><a href="{url}">{network}</a></li>
+      {/profiles}
+      <li><a href="{resumeUrl}">Resume (PDF)</a></li>
+      <li><a href="/resume.json">resume.json</a></li>
+      <li><a href="/resume.md">resume.md</a></li>
+    </ul>
+
+    {?work}
+    <h2>Experience</h2>
+    {#work}
+    <article>
+      <h3>{position} — {name}</h3>
+      <p><em>{period}</em></p>
+      <p>{summary}</p>
+      <ul>
+        {#highlights}
+        <li>{.}</li>
+        {/highlights}
+      </ul>
+    </article>
+    {/work}
+    {/work}
+
+    {?projects}
+    <h2>Projects</h2>
+    {#projects}
+    <article>
+      <h3>{name}</h3>
+      <p>{description}</p>
+      <ul>
+        {#highlights}
+        <li>{.}</li>
+        {/highlights}
+      </ul>
+      <p><em>{keywordList}</em></p>
+    </article>
+    {/projects}
+    {/projects}
+
+    {?skills}
+    <h2>Skills</h2>
+    <ul>
+      {#skills}
+      <li><strong>{label}</strong>: {keywordList}</li>
+      {/skills}
+    </ul>
+    {/skills}
+
+    {?education}
+    <h2>Education</h2>
+    {#education}
+    <p>{degree} — {institution}{detail}</p>
+    {/education}
+    {/education}
+
+    {?certificates}
+    <h2>Certificates</h2>
+    {#certificates}
+    <p><strong>{name}</strong> — {summary}</p>
+    {/certificates}
+    {/certificates}
+  </div>

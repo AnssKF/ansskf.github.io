@@ -1,0 +1,10 @@
+# This is a public portfolio: humans, search engines and AI agents are all welcome.
+User-agent: *
+Allow: /
+
+{#aiBots}
+User-agent: {.}
+Allow: /
+
+{/aiBots}
+Sitemap: {site}/sitemap.xml

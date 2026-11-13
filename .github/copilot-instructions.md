@@ -16,6 +16,7 @@ Personal portfolio static site for **Anss Khaled** — published at `anssk.me` (
 | `css/site.css` | All styles; single file |
 | `resume.json` | Only file to edit for content changes (jsonresume.org schema v1, plus `basics.resumeUrl`) |
 | `assets/signature.svg` | Owner's hand-drawn signature, one `<path>` per stroke, drawn in stroke order |
+| `tools/build-static.mjs` + `tools/templates/` + `tools/lib/template.mjs` | Fills the templates (`{placeholder}` syntax, documented in template.mjs) with data from `resume.json` to generate what non-JS crawlers/AI agents read from `resume.json`: the `build:seo` / `build:content` regions of `index.html` (title, meta, JSON-LD, plain-HTML resume shown only without JS), plus `resume.md`, `llms.txt`, `robots.txt`, `sitemap.xml`. **Run `node tools/build-static.mjs` after editing `resume.json`**; `--check` fails if stale. Never hand-edit between the markers |
 | `assets/og.png` | 1200×630 social preview (`og:image`, `twitter:image`). Regenerate with `tools/og-image.html` (render steps in its header comment) after changing the name or job title |
 | `favicon.svg`, `sitemap.xml`, `.nojekyll` | Static assets |
 | `CNAME` | `anssk.me` — **never rename or delete** |

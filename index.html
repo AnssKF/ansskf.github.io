@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ═══════════════════════════ BASICS ═══════════════════════════ -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!--
-    SEO FALLBACKS: crawlers read these before JS runs.
-    resume.json is the single source of truth; syncMeta() in js/app.js
-    overwrites them at runtime. Keep in sync manually only when basics change.
-  -->
-  <meta name="description" content="Anss Khaled Farouk — Senior Software Engineer specialising in Ruby on Rails, ReactJS, and full-stack web development. Portfolio and contact." />
   <meta name="robots" content="index, follow" />
   <meta name="color-scheme" content="light dark" />
   <meta name="theme-color" content="#F3EEE4" />
-  <!-- Theme before first paint (no flash): saved choice, else the OS setting. Kept in sync by js/app.js. -->
+
+
+  <!-- ═════════════════ BEFORE FIRST PAINT (inline, no flash) ═════════════════
+    1. adds the `js` class (hides the plain-HTML resume below, which only no-JS visitors and crawlers get)
+    2. applies the theme: saved choice, else the OS setting (kept in sync by js/services/ThemeManager.js)
+  -->
   <script>
     (function () {
+      document.documentElement.classList.add('js');
       var saved = null;
       try { saved = localStorage.getItem('theme'); } catch (e) {}
       var t = saved === 'dark' || saved === 'light' ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -22,63 +23,265 @@
       document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#161513' : '#F3EEE4');
     })();
   </script>
+
+
+  <!-- ═══════════════ SEO · SOCIAL · STRUCTURED DATA (generated) ═══════════════
+    For crawlers and AI agents that don't run JavaScript. GENERATED from resume.json + tools/templates/seo.html:
+    run `node tools/build-static.mjs` after editing resume.json. Never edit between the build:seo markers.
+    (MetaSync also refreshes these at runtime.)
+  -->
+  <!-- build:seo -->
   <title>Anss Khaled — Senior Software Engineer</title>
-
+  <meta name="description" content="Software Engineer with expertise in building robust and scalable front-end and back-end systems. I turn messy, half-formed ideas into software people can use without thinking about it." />
   <link rel="canonical" href="https://anssk.me" />
-  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate" type="application/json" href="/resume.json" title="Resume (JSON Resume format)" />
+  <link rel="alternate" type="text/markdown" href="/resume.md" title="Resume (markdown)" />
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
 
-  <meta property="og:type"        content="profile" />
-  <meta property="og:title"       content="Anss Khaled — Senior Software Engineer" />
-  <meta property="og:description" content="Senior Software Engineer specialising in Ruby on Rails, ReactJS, and full-stack web development." />
-  <meta property="og:url"         content="https://anssk.me" />
-  <meta property="og:locale"      content="en_US" />
-  <meta property="og:image"       content="https://anssk.me/assets/og.png" />
-  <meta property="og:image:width"  content="1200" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Anss Khaled — Senior Software Engineer" />
+  <meta property="og:description" content="Software Engineer with expertise in building robust and scalable front-end and back-end systems. I turn messy, half-formed ideas into software people can use without thinking about it." />
+  <meta property="og:url" content="https://anssk.me" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://anssk.me/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt"    content="Anss Khaled Farouk drawn in ink dots on warm paper, with a handwritten signature." />
+  <meta property="og:image:alt" content="Anss Khaled Farouk — Senior Software Engineer" />
   <meta property="profile:first_name" content="Anss" />
-  <meta property="profile:last_name"  content="Khaled" />
+  <meta property="profile:last_name" content="Khaled Farouk" />
 
-  <meta name="twitter:card"        content="summary_large_image" />
-  <meta name="twitter:title"       content="Anss Khaled — Senior Software Engineer" />
-  <meta name="twitter:description" content="Senior Software Engineer specialising in Ruby on Rails, ReactJS, and full-stack web development." />
-  <meta name="twitter:image"       content="https://anssk.me/assets/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Anss Khaled — Senior Software Engineer" />
+  <meta name="twitter:description" content="Software Engineer with expertise in building robust and scalable front-end and back-end systems. I turn messy, half-formed ideas into software people can use without thinking about it." />
+  <meta name="twitter:image" content="https://anssk.me/assets/og.png" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Anss Khaled Farouk",
-    "alternateName": "Anss Khaled",
-    "url": "https://anssk.me",
-    "email": "anss.khaled00@gmail.com",
-    "telephone": "+20 1016329993",
-    "jobTitle": "Senior Software Engineer",
-    "description": "Software Engineer with expertise in building robust and scalable front-end and back-end systems.",
-    "sameAs": [
-      "https://www.linkedin.com/in/ansskfarouk/",
-      "https://github.com/AnssKF"
-    ],
-    "worksFor": { "@type": "Organization", "name": "Pixelogic Media" }
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://anssk.me/#person",
+        "name": "Anss Khaled Farouk",
+        "alternateName": "Anss Khaled",
+        "url": "https://anssk.me",
+        "email": "anss.khaled00@gmail.com",
+        "telephone": "+20 1016329993",
+        "jobTitle": "Senior Software Engineer",
+        "description": "Software Engineer with expertise in building robust and scalable front-end and back-end systems. I turn messy, half-formed ideas into software people can use without thinking about it.",
+        "image": "https://anssk.me/assets/og.png",
+        "sameAs": [
+          "https://www.linkedin.com/in/ansskfarouk/",
+          "https://github.com/AnssKF"
+        ],
+        "knowsAbout": [
+          "JavaScript",
+          "TypeScript",
+          "PHP",
+          "Ruby",
+          "Python",
+          "Laravel",
+          "Ruby on Rails",
+          "Node.js",
+          "Django",
+          "Redis",
+          "React",
+          "Redux",
+          "Angular",
+          "Alpine.js",
+          "jQuery",
+          "HTML",
+          "CSS",
+          "Sass",
+          "Tailwind CSS",
+          "Bootstrap",
+          "MySQL",
+          "PostgreSQL",
+          "Git",
+          "GitHub",
+          "GitLab",
+          "Docker",
+          "GraphQL",
+          "Electron",
+          "VS Code",
+          "Linux",
+          "OOP"
+        ],
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Pixelogic Media"
+        },
+        "alumniOf": [
+          {
+            "@type": "CollegeOrUniversity",
+            "name": "Ain Shams University",
+            "url": "https://www.asu.edu.eg/"
+          }
+        ],
+        "homeLocation": {
+          "@type": "Place",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Cairo",
+            "addressCountry": "EG"
+          }
+        }
+      },
+      {
+        "@type": "ProfilePage",
+        "url": "https://anssk.me",
+        "name": "Anss Khaled — Senior Software Engineer",
+        "description": "Software Engineer with expertise in building robust and scalable front-end and back-end systems. I turn messy, half-formed ideas into software people can use without thinking about it.",
+        "inLanguage": "en",
+        "mainEntity": {
+          "@id": "https://anssk.me/#person"
+        }
+      }
+    ]
   }
   </script>
+  <!-- /build:seo -->
 
+
+  <!-- ═══════════════════════ SITE FILES & ICON ═══════════════════════ -->
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+
+  <!-- ═══════════════════════════ FONTS & STYLES ═══════════════════════════ -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400&display=swap" />
   <link rel="stylesheet" href="css/site.css" />
 
 
-  <!-- Order matters: main.js (module, deferred) registers Alpine components on `alpine:init`, so it must come before Alpine. -->
+  <!-- ═══════════════════════════ SCRIPTS ═══════════════════════════
+    Order matters: main.js (module, deferred) registers the Alpine components on `alpine:init`, so it comes before Alpine.
+  -->
   <script type="module" src="js/main.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
-<body x-data="site">
-  <canvas id="field" aria-hidden="true"></canvas>
-  <noscript><p class="noscript">This site draws itself with JavaScript. The plain version lives in <a href="resume.json">resume.json</a>.</p></noscript>
 
+
+<body x-data="site">
+
+  <!-- ═══════════════════════ BACKGROUND DOT FIELD ═══════════════════════ -->
+  <canvas id="field" aria-hidden="true"></canvas>
+
+
+  <!-- ═══════════════ PLAIN-HTML RESUME (generated, only without JS) ═══════════════
+    For visitors with JavaScript off and for crawlers/AI agents. Hidden by CSS when the `js` class is set.
+    GENERATED from resume.json + tools/templates/content.html; never edit between the build:content markers.
+  -->
+  <!-- build:content -->
+  <div id="static-resume" class="static-resume">
+    <h1>Anss Khaled Farouk</h1>
+    <p>Senior Software Engineer · Cairo, Egypt</p>
+    <p>Software Engineer with expertise in building robust and scalable front-end and back-end systems. I turn messy, half-formed ideas into software people can use without thinking about it.</p>
+    <ul>
+      <li><a href="mailto:anss.khaled00@gmail.com">anss.khaled00@gmail.com</a></li>
+      <li><a href="https://www.linkedin.com/in/ansskfarouk/">LinkedIn</a></li>
+      <li><a href="https://github.com/AnssKF">GitHub</a></li>
+      <li><a href="https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view">Resume (PDF)</a></li>
+      <li><a href="/resume.json">resume.json</a></li>
+      <li><a href="/resume.md">resume.md</a></li>
+    </ul>
+
+    <h2>Experience</h2>
+    <article>
+      <h3>Senior Software Engineer — Pixelogic Media</h3>
+      <p><em>Sep 2024 – Present</em></p>
+      <p>Building and evolving a complex media platform using Ruby on Rails and ReactJS. Leading technical initiatives end-to-end — from architectural decisions to delivery — with a focus on reliability, performance, and clean, scalable code.</p>
+      <ul>
+        <li>Led an end-to-end replacement of the core rich-text editor, managing the project from proof-of-concept through execution; redesigned the component architecture to separate layers and hide editor-specific implementation details</li>
+        <li>Integrated OpenSearch to power advanced search functionality, building a reliable data pipeline that syncs and enriches PostgreSQL records through Kafka topics</li>
+        <li>Refactored critical React and Ruby on Rails components, directly reducing production bugs, optimising performance, and improving overall user and developer experience</li>
+        <li>Developed complex, data-sensitive features with strict focus on writing atomic, highly reusable, and scalable code</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Software Engineer — ShakaCode</h3>
+      <p><em>Apr 2022 – Sep 2024</em></p>
+      <p>Remote full-stack consultant working across multiple client products simultaneously. Specialised in Ruby on Rails, ReactJS, and PostgreSQL — shipping features, driving migrations, and integrating third-party systems under tight timelines and varying business contexts.</p>
+      <ul>
+        <li>Consulted for multiple clients — including Blade, Hichee, and Clozemaster — building and maintaining applications using Ruby on Rails, ReactJS, and PostgreSQL</li>
+        <li>Balanced multiple projects simultaneously, quickly adapting to new business logic and tech stacks</li>
+        <li>Executed a complete system migration, rebuilding a legacy Ruby/ERB application into a modern, fully API-based architecture</li>
+        <li>Built a complete SEO project to improve application search rankings, collaborating with an external team for data collection and execution</li>
+        <li>Integrated third-party services like Klaviyo to support marketing campaigns and customer outreach</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Software Developer — Yodawy</h3>
+      <p><em>Nov 2020 – Apr 2022</em></p>
+      <p>Maintained and extended core microservices for a healthcare platform built on PHP Laravel and MySQL. Improved system performance, and built internal tooling to support engineering and operations teams.</p>
+      <ul>
+        <li>Maintained core microservices in PHP Laravel, directly supporting the main customer-facing application; refactored large sections of legacy code into modern, reliable components</li>
+        <li>Built custom internal dashboards with Laravel Livewire for data and service management</li>
+        <li>Optimised API performance system-wide through a custom-built, highly reusable API caching module with expiration and tag control</li>
+        <li>Implemented interactive spatial operations utilising Google Maps and MySQL spatial features, allowing teams to seamlessly view and edit geographic data</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Full-Stack Web/App Developer — Freelance</h3>
+      <p>Designed, developed, and maintained full-stack web and mobile applications for various clients. Focused on delivering clean RESTful APIs and responsive, browser-based single-page applications across a range of technologies and domains.</p>
+      <ul>
+        <li>Designed and developed RESTful backend systems</li>
+        <li>Built responsive single-page applications across various technologies</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Data Science and Machine Learning Intern — BBI Consultancy</h3>
+      <p><em>Jan 2020 – Mar 2020</em></p>
+      <p>Studied and applied modern Machine Learning and AI models in a professional consulting environment, building practical foundations in data science alongside exposure to real-world business use cases.</p>
+      <ul>
+        <li>Studied and applied cutting-edge Machine Learning and AI models and algorithms</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Front-end Developer Intern — EasyKash</h3>
+      <p><em>Jun 2019 – Jul 2019</em></p>
+      <p>Contributed to production front-end development using Angular 2+ and Ionic4 within an Agile Scrum team, gaining hands-on experience in iterative delivery and cross-functional collaboration.</p>
+      <ul>
+        <li>Gained hands-on experience with Angular 2+ and Ionic4</li>
+        <li>Worked in an Agile Scrum environment</li>
+      </ul>
+    </article>
+
+    <h2>Projects</h2>
+    <article>
+      <h3>Chatbot for Information Retrieval System</h3>
+      <p>Engineered an innovative information retrieval system capable of extracting crucial information from unstructured and raw data in document formats such as PDFs. Designed to assist users in answering domain-specific queries within closed domain areas.</p>
+      <ul>
+        <li>Fine-tuned BERT NLP model using the SQuAD dataset for analyzing, extracting, and ranking answers</li>
+        <li>Used RASA chatbot framework as the backend for natural language understanding and seamless interactions</li>
+        <li>Graduation project in collaboration with Mentor Graphics</li>
+      </ul>
+      <p><em>NLP, BERT, Python, RASA, Machine Learning</em></p>
+    </article>
+
+    <h2>Skills</h2>
+    <ul>
+      <li><strong>Languages (Expert)</strong>: JavaScript, TypeScript, PHP, Ruby, Python</li>
+      <li><strong>Backend (Expert)</strong>: Laravel, Ruby on Rails, Node.js, Django, Redis</li>
+      <li><strong>Frontend (Expert)</strong>: React, Redux, Angular, Alpine.js, jQuery, HTML, CSS, Sass, Tailwind CSS, Bootstrap</li>
+      <li><strong>Databases (Advanced)</strong>: MySQL, PostgreSQL</li>
+      <li><strong>Tools &amp; DevOps (Advanced)</strong>: Git, GitHub, GitLab, Docker, GraphQL, Electron, VS Code, Linux, OOP</li>
+    </ul>
+
+    <h2>Education</h2>
+    <p>Bachelor's Degree, Computer and System Engineering — Ain Shams University (2020, Very Good)</p>
+
+    <h2>Certificates</h2>
+    <p><strong>Embedded Systems Diploma, AVR Architecture</strong> — Completed an Embedded Systems Diploma focusing on AVR Architecture, acquiring hands-on experience in developing efficient drivers for Atmega32 internal modules. Gained proficiency in working with AVR architecture and embedded systems development. 120 hours total.</p>
+  </div>
+  <!-- /build:content -->
+
+
+  <!-- ═══════════════════════════ THE PAGE ═══════════════════════════ -->
   <main class="page" x-ref="page" x-cloak>
+
+    <!-- The ink pen line (drawn by js/ink/InkLine.js) -->
     <svg class="ink" x-ref="ink" aria-hidden="true">
       <defs>
         <mask id="ink-mask" maskUnits="userSpaceOnUse">
@@ -91,7 +294,9 @@
       <circle class="ink-nib" r="3.2" cx="-10" cy="-10"/>
     </svg>
 
-    <!-- LANDMARK: hero. Every [data-section] with an id is a hash route (#home). The name itself is drawn by the dot field. -->
+
+    <!-- ───────────── HERO (hash route #home) ─────────────
+      Every [data-section] with an id is a hash route. The name itself is drawn by the dot field. -->
     <header class="hero" id="home" data-section>
       <h1 class="sr-only" x-text="r.basics.name"></h1>
       <p class="label mono" x-text="[r.basics.label, place].filter(Boolean).join(' · ')"></p>
@@ -104,8 +309,9 @@
       <span class="ink-start" data-ink="start"></span>
     </header>
 
-    <!--
-      SECTIONS: one loop renders every entry of js/config/sections.js.
+
+    <!-- ───────────── SECTIONS (one loop) ─────────────
+      Renders every entry of js/config/sections.js.
       Common chrome (hash route, heading, copy-link icon, ink-line node) is here once; the body is chosen by `s.view`.
       To add a view: copy one of the <template x-if> blocks below and change the condition.
     -->
@@ -116,7 +322,7 @@
           <h2 x-anchor="s.id"><span x-text="s.title"></span></h2>
         </header>
 
-        <!-- view: work (work[]) -->
+        <!-- · · · view: work (work[]) · · · -->
         <template x-if="s.view === 'work'">
           <div>
             <template x-for="(job, i) in r.work" :key="i">
@@ -153,7 +359,7 @@
           </div>
         </template>
 
-        <!-- view: projects (projects[]) -->
+        <!-- · · · view: projects (projects[]) · · · -->
         <template x-if="s.view === 'projects'">
           <div class="cards" :class="{ solo: r.projects.length === 1 }">
             <template x-for="(p, i) in r.projects" :key="i">
@@ -173,7 +379,7 @@
           </div>
         </template>
 
-        <!-- view: skills (skills[]) -->
+        <!-- · · · view: skills (skills[]) · · · -->
         <template x-if="s.view === 'skills'">
           <div class="clusters">
             <template x-for="(sk, si) in r.skills" :key="si">
@@ -189,7 +395,7 @@
           </div>
         </template>
 
-        <!-- view: education (education[] + certificates[]) -->
+        <!-- · · · view: education (education[] + certificates[]) · · · -->
         <template x-if="s.view === 'education'">
           <div>
             <template x-for="(e, i) in r.education" :key="i">
@@ -227,7 +433,8 @@
       </section>
     </template>
 
-    <!-- LANDMARK: sign-off (hash route #contact) -->
+
+    <!-- ───────────── SIGN-OFF (hash route #contact) ───────────── -->
     <footer id="contact" class="sec foot" data-section>
       <header class="sec-head" data-ink>
         <p class="key mono">basics.email</p>
@@ -244,6 +451,8 @@
     </footer>
   </main>
 
+
+  <!-- ═══════════════════════════ THEME TOGGLE ═══════════════════════════ -->
   <button class="theme-btn" type="button" x-cloak @click="$store.theme.toggle($event)"
           :aria-label="$store.theme.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
           :title="$store.theme.theme === 'dark' ? 'Lights on' : 'Lights off'">
@@ -254,7 +463,8 @@
     </svg>
   </button>
 
-  <!-- Ctrl/⌘+K command palette (commands: js/ui/commands.js) -->
+
+  <!-- ═══════════ COMMAND PALETTE · Ctrl/⌘+K (commands: js/ui/commands.js) ═══════════ -->
   <div x-data="palette" @keydown.window="onKey($event)" x-effect="document.documentElement.classList.toggle('palette-open', isOpen)">
     <button class="chip mono" type="button" x-cloak x-show="ready && !isOpen" x-transition.opacity @click="show()" x-text="chip" aria-label="Open command palette"></button>
 
@@ -275,6 +485,8 @@
     </div>
   </div>
 
+
+  <!-- ═══════════════════════════ TOAST ═══════════════════════════ -->
   <div class="toast-wrap" aria-live="polite">
     <div class="toast mono" x-cloak x-show="$store.toast.message" x-transition.opacity x-text="$store.toast.message"></div>
   </div>

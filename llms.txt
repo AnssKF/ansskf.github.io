@@ -1,0 +1,21 @@
+# Anss Khaled Farouk
+
+> Software Engineer with expertise in building robust and scalable front-end and back-end systems. I turn messy, half-formed ideas into software people can use without thinking about it.
+
+Senior Software Engineer · Cairo, Egypt. This is a personal portfolio; the interactive page at https://anssk.me/ is drawn with JavaScript, but everything on it is available as plain files:
+
+## Resume
+
+- [resume.md](https://anssk.me/resume.md): full resume as markdown (experience, projects, skills, education)
+- [resume.json](https://anssk.me/resume.json): the same data in the JSON Resume format (https://jsonresume.org/schema)
+- [Resume (PDF)](https://drive.google.com/file/d/1JVNd-xHBrdpktsuDREXfbxVwLKMbNYjy/view): downloadable version
+
+## Elsewhere
+
+- [LinkedIn](https://www.linkedin.com/in/ansskfarouk/)
+- [GitHub](https://github.com/AnssKF)
+
+## Contact
+
+- Email: anss.khaled00@gmail.com
+- Website: https://anssk.me/

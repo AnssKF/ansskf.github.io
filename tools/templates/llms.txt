@@ -1,0 +1,22 @@
+# {name}
+
+> {description}
+
+{headline}. This is a personal portfolio; the interactive page at {site}/ is drawn with JavaScript, but everything on it is available as plain files:
+
+## Resume
+
+- [resume.md]({site}/resume.md): full resume as markdown (experience, projects, skills, education)
+- [resume.json]({site}/resume.json): the same data in the JSON Resume format (https://jsonresume.org/schema)
+- [Resume (PDF)]({resumeUrl}): downloadable version
+
+## Elsewhere
+
+{#profiles}
+- [{network}]({url})
+{/profiles}
+
+## Contact
+
+- Email: {email}
+- Website: {site}/
